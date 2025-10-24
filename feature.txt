@@ -1,1 +1,1 @@
-Add environment variable setup for frontend and backend
+Document API endpoints in README for hackathon submission
