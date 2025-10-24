@@ -1,1 +1,1 @@
-Add Node.js backend with Express.js and TypeScript
+Set up MongoDB connection with Mongoose schemas
