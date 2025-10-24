@@ -1,1 +1,1 @@
-Implement smart command suggestions in chat UI
+Add contextual help for user commands in UI
