@@ -1,1 +1,1 @@
-Improve securityRoutes.ts with AR-based scam detection UI
+Update sharingRoutes.ts to generate AR-compatible QR codes
