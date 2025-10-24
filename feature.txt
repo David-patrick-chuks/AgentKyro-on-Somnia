@@ -1,1 +1,1 @@
-Implement spending patterns analysis: GET /api/analytics/spending-patterns
+Add portfolio tracking endpoint: GET /api/analytics/portfolio
