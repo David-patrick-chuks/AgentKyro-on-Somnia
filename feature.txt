@@ -1,1 +1,1 @@
-Create responsive sidebar for transaction history navigation
+Implement local chat history storage with IndexedDB
