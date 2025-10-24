@@ -1,1 +1,1 @@
-Implement local chat history storage with IndexedDB
+Add Node.js backend with Express.js and TypeScript
