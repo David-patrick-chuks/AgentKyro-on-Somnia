@@ -1,1 +1,1 @@
-Set up Cloudinary for image and video management
+Implement multi-language UI support with 10+ languages
