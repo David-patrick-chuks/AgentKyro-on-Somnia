@@ -1,1 +1,1 @@
-Refactor analyticsRoutes.ts for new dashboard endpoints
+Update contactRoutes.ts to support AR-based contact visualization
