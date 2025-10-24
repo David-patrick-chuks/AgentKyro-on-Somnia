@@ -1,1 +1,1 @@
-Add QR code generation for transactions: POST /api/sharing/generate-qr
+Implement transaction receipt generation: POST /api/sharing/generate-receipt
