@@ -1,1 +1,1 @@
-Add Framer Motion for UI animations
+Create error handling for offline/unsupported browsers
