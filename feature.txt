@@ -1,1 +1,1 @@
-Add risk assessment endpoint: POST /api/security/risk-assessment
+Implement address reputation check: GET /api/security/address-reputation/:address
