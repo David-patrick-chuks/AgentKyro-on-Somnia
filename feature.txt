@@ -1,1 +1,1 @@
-Add metrics endpoint to healthRoutes.ts for performance monitoring
+Enhance notificationRoutes.ts with real-time WebSocket support
