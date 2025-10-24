@@ -1,1 +1,1 @@
-Create user profile endpoints: GET/PUT /api/user/profile
+Add contact management model and POST /api/contacts
