@@ -1,1 +1,1 @@
-Refactor ConditionalTransaction model for better type safety
+Optimize Contact model with indexed fields for faster queries
