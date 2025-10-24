@@ -1,1 +1,1 @@
-Add natural language processing with Google Gemini AI
+Set up voice input support using Web Speech API
