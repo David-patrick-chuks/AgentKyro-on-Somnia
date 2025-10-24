@@ -1,1 +1,1 @@
-Enhance Cloudinary config for optimized AR asset uploads
+Refactor ConditionalTransaction model for better type safety
