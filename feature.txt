@@ -1,1 +1,1 @@
-Remove backend/.env.example for security compliance
+Enhance Cloudinary config for optimized AR asset uploads
