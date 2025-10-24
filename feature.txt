@@ -1,1 +1,1 @@
-Add notification subscription management: POST/DELETE /api/notifications/subscribe
+Implement health check endpoint: GET /api/health
