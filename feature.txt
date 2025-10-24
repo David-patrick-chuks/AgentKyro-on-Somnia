@@ -1,1 +1,1 @@
-Enhance TeamTransaction model with audit logging
+Optimize Transaction model for faster analytics processing
