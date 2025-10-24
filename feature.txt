@@ -1,1 +1,1 @@
-Implement Privy wallet authentication for Somnia testnet
+Create chat-based UI for token swap commands
