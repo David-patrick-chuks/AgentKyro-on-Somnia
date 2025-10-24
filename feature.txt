@@ -1,1 +1,1 @@
-Add role-based access to Team model for approval workflows
+Enhance TeamTransaction model with audit logging
