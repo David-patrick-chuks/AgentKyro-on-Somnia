@@ -1,1 +1,1 @@
-Implement contact verification endpoint: POST /api/contacts/verify
+Create contact group management: POST /api/contacts/groups
