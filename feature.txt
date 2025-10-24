@@ -1,1 +1,1 @@
-Implement scheduled transaction endpoint: POST /api/transactions/scheduled
+Add team transaction support: POST /api/transactions/team
