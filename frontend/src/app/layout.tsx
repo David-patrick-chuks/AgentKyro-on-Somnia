@@ -1,12 +1,12 @@
+import ContextProvider from "@/context/index";
 import type { Metadata } from "next";
 import { Sora } from "next/font/google";
 import "./globals.css";
-import ContextProvider from "@/context/index";
 
 const sora = Sora({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "IntentSwap - Swap Crypto with Just Words",
+  title: "AgentKyro - Swap Crypto with Just Words",
   description: "Powered by Somnia Testnet and AI Technology",
 };
 

@@ -1,0 +1,1 @@
+Add initial Next.js 15 frontend setup with Tailwind CSS

@@ -1,29 +1,29 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import {
-  Send,
-  Copy,
-  ExternalLink,
-  CheckCircle,
-  AlertCircle,
-  Plus,
-  MessageSquare,
-  Settings,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  Trash2,
-  Menu,
-  X,
-} from "lucide-react";
-import { usePrivy } from "@privy-io/react-auth";
-import { TOKEN_ADDRESSES, SOMNIA_CONFIG } from "@/lib/blockchain/config";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
 import { Button } from "@/components/ui/button";
+import { SOMNIA_CONFIG, TOKEN_ADDRESSES } from "@/lib/blockchain/config";
 import { cn } from "@/lib/utils";
-import { FaMicrophone } from "react-icons/fa6";
+import { usePrivy } from "@privy-io/react-auth";
 import { ethers } from "ethers";
+import {
+  AlertCircle,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  ExternalLink,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Plus,
+  Send,
+  Settings,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { FaMicrophone } from "react-icons/fa6";
 
 declare global {
   interface Window {
@@ -134,7 +134,7 @@ export default function ChatPage() {
   const saveChatSessions = (sessions: ChatSession[]) => {
     try {
       localStorage.setItem(
-        "intentswap_chat_sessions",
+        "agentkyro_chat_sessions",
         JSON.stringify(sessions)
       );
     } catch (error) {
@@ -145,7 +145,7 @@ export default function ChatPage() {
   // Load chat sessions from localStorage
   const loadChatSessions = (): ChatSession[] => {
     try {
-      const stored = localStorage.getItem("intentswap_chat_sessions");
+      const stored = localStorage.getItem("agentkyro_chat_sessions");
       if (stored) {
         const sessions = JSON.parse(stored) as Array<{
           id: string;
@@ -189,7 +189,7 @@ export default function ChatPage() {
     const welcomeMessage: Message = {
       id: "welcome",
       sender: "agent",
-      text: ' Welcome to IntentSwap! I can help you transfer tokens on Somnia testnet using simple commands. Try saying something like:\n\n• "Send 50 STT to Alice"\n• "Transfer 100 tokens to 0x123..."\n• "Pay Bob 25 STT"',
+      text: ' Welcome to AgentKyro! I can help you transfer tokens on Somnia testnet using simple commands. Try saying something like:\n\n• "Send 50 STT to Alice"\n• "Transfer 100 tokens to 0x123..."\n• "Pay Bob 25 STT"',
       timestamp: new Date(),
       type: "normal",
     };
@@ -708,7 +708,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
           )}
           {unsupportedBrowser && (
             <div className="bg-yellow-700 text-white text-center py-2 font-semibold pointer-events-auto">
-              Your browser does not support all features required for IntentSwap
+              Your browser does not support all features required for AgentKyro
               (e.g., voice input). Please use a modern browser like Chrome or
               Edge.
             </div>
@@ -734,7 +734,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-700">
             {(showMobileSidebar || !sidebarCollapsed) && (
-              <h2 className="text-lg font-semibold text-white">IntentSwap</h2>
+              <h2 className="text-lg font-semibold text-white">AgentKyro</h2>
             )}
 
             {/* Mobile close button */}
@@ -923,7 +923,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
                 </button>
 
                 <h1 className="text-base md:text-lg font-semibold text-white">
-                  IntentSwap
+                  AgentKyro
                 </h1>
               </div>
 

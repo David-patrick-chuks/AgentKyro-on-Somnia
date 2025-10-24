@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { MessageSquare, Home, Settings, Menu, Trash2 } from "lucide-react";
+import { Home, Menu, MessageSquare, Settings, Trash2 } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
 import { GoSidebarCollapse } from "react-icons/go";
 import ConnectWalletButton from "./ConnectWalletButton";
 
@@ -151,7 +151,7 @@ export default function ChatSidebar({
               <div className="flex items-center justify-between px-6 py-4 border-b border-border/40">
                 <div className="flex items-center gap-2">
                   <Link href="/" className="font-bold text-lg text-white">
-                    IntentSwap
+                    AgentKyro
                   </Link>
                 </div>
                 <div className="flex items-center gap-2">
@@ -214,7 +214,7 @@ export default function ChatSidebar({
           <div className="flex items-center justify-between px-4 py-4 border-b border-border/40">
             <div className="flex items-center gap-2">
               <Link href="/" className="font-bold text-lg">
-                IntentSwap
+                AgentKyro
               </Link>
             </div>
             <div className="flex items-center gap-2">

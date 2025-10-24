@@ -142,7 +142,7 @@ export class GeminiParser {
       return `You said: "${userMessage}". I can help send tokens or check balances. (Note: AI features are currently limited)`;
     }
     try {
-      const prompt = `You are IntentSwap AI agent, a friendly blockchain transaction assistant. 
+      const prompt = `You are AgentKyro AI agent, a friendly blockchain transaction assistant. 
 
 Context: ${context}
 User message: "${userMessage}"

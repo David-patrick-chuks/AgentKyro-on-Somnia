@@ -1,15 +1,15 @@
 "use client";
-import Link from "next/link";
+import AnimatedWordType from "@/components/AnimatedWordType";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
-import { usePrivy } from "@privy-io/react-auth";
-import { useState } from "react";
 import Features from "@/components/Features";
-import { SiProbot } from "react-icons/si";
+import { usePrivy } from "@privy-io/react-auth";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 import { FaBoltLightning } from "react-icons/fa6";
 import { GiCheckedShield } from "react-icons/gi";
+import { SiProbot } from "react-icons/si";
 import { SlMagnifier } from "react-icons/sl";
-import AnimatedWordType from "@/components/AnimatedWordType";
-import Image from "next/image";
 
 export default function Home() {
   const { authenticated } = usePrivy();
@@ -32,12 +32,12 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <Image
               src="/logo.jpg"
-              alt="IntentSwap Logo"
+              alt="AgentKyro Logo"
               width={40}
               height={40}
             />
             <h1 className="text-white text-lg font-semibold tracking-wide">
-              IntentSwap
+              AgentKyro
             </h1>
           </div>
           <div className="flex items-center">
@@ -179,7 +179,7 @@ export default function Home() {
           </div>
           <div className="flex gap-6">
             <Link
-              href="https://github.com/Hackathons-w-Rapto/IntentSwap"
+              href="https://github.com/David-patrick-chuks/AgentKyro-on-Somnia"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors duration-300"

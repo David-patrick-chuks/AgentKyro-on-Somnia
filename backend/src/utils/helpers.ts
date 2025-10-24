@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-// Utility functions for the IntentSwap backend
+// Utility functions for the AgentKyro backend
 
 export const isValidObjectId = (id: string): boolean => {
   return Types.ObjectId.isValid(id);
