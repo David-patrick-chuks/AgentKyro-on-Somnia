@@ -1,1 +1,1 @@
-Add AR portfolio metadata to User model
+Refactor analyticsRoutes.ts for new dashboard endpoints
