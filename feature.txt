@@ -1,1 +1,1 @@
-Create error handling for offline/unsupported browsers
+Add environment variable setup for frontend and backend
