@@ -1,1 +1,1 @@
-Improve NotificationSubscription model with expiration handling
+Fix QueuedTransaction model to support offline transaction retries
