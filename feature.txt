@@ -1,1 +1,1 @@
-Add transaction prediction logic: GET /api/analytics/predictions
+Create conditional payment endpoint: POST /api/transactions/conditional
