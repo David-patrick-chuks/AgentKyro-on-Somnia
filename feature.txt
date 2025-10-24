@@ -1,1 +1,1 @@
-Enhance notificationRoutes.ts with real-time WebSocket support
+Improve securityRoutes.ts with AR-based scam detection UI
