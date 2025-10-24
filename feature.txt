@@ -1,1 +1,1 @@
-Implement address reputation check: GET /api/security/address-reputation/:address
+Add scam detection logic: POST /api/security/scam-detection
