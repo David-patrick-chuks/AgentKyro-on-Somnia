@@ -1,1 +1,1 @@
-Integrate Nodemailer for email notifications: POST /api/sharing/send-email
+Set up notification system: GET/POST /api/notifications
