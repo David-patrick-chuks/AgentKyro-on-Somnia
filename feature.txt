@@ -1,1 +1,1 @@
-Add portfolio tracking endpoint: GET /api/analytics/portfolio
+Implement transaction history search: GET /api/analytics/transactions
