@@ -1,1 +1,1 @@
-Implement transaction validation: POST /api/security/validate-transaction
+Add QR code generation for transactions: POST /api/sharing/generate-qr
