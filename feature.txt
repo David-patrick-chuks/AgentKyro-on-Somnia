@@ -1,1 +1,1 @@
-Implement multi-language UI support with 10+ languages
+Add PWA features for native app installation
