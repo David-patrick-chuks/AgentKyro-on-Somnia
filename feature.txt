@@ -1,1 +1,1 @@
-Add notification preferences to Notification model
+Improve NotificationSubscription model with expiration handling
