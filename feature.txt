@@ -1,1 +1,1 @@
-Add initial Next.js 15 frontend setup with Tailwind CSS
+Implement Privy wallet authentication for Somnia testnet
