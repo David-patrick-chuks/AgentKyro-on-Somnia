@@ -1,1 +1,1 @@
-Optimize Transaction model for faster analytics processing
+Add AR portfolio metadata to User model
