@@ -1,1 +1,1 @@
-Add team creation endpoint: POST /api/teams
+Implement team member management: POST/DELETE /api/teams/:id/members
