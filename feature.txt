@@ -1,1 +1,1 @@
-Add Radix UI components for improved UX
+Integrate Sonner for toast notifications
