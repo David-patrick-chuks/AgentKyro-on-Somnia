@@ -1,1 +1,1 @@
-Create analytics dashboard endpoint: GET /api/analytics/dashboard
+Implement spending patterns analysis: GET /api/analytics/spending-patterns
