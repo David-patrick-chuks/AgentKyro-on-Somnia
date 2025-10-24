@@ -1,1 +1,1 @@
-Add recent transaction repeat functionality
+Set up Ethers.js for Somnia testnet interactions
