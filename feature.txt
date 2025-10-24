@@ -1,1 +1,1 @@
-Add social media sharing: POST /api/sharing/social-share
+Integrate Nodemailer for email notifications: POST /api/sharing/send-email
