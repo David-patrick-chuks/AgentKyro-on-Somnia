@@ -1,1 +1,1 @@
-Implement offline transaction queue: POST /api/transactions/queue
+Add risk assessment endpoint: POST /api/security/risk-assessment
