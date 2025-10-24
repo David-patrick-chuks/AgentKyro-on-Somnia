@@ -1,3 +1,14 @@
+// Import all API clients
+import { UserApiClient } from './userApi';
+import { ContactApiClient } from './contactApi';
+import { TeamApiClient } from './teamApi';
+import { AnalyticsApiClient } from './analyticsApi';
+import { TransactionApiClient } from './transactionApi';
+import { SecurityApiClient } from './securityApi';
+import { SharingApiClient } from './sharingApi';
+import { NotificationApiClient } from './notificationApi';
+import { HealthApiClient } from './healthApi';
+
 // Export all API clients
 export { UserApiClient } from './userApi';
 export { ContactApiClient } from './contactApi';

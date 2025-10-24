@@ -139,7 +139,7 @@ const ConnectBtn: React.FC<ConnectBtnProps> = ({ networks = false }) => {
       >
         {address ? formatAddress(address) : "Connected"}
       </motion.button>
-      <Captcha />
+      {/* <Captcha /> */}
     </div>
   );
 };

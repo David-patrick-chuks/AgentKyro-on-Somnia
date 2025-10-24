@@ -1,6 +1,7 @@
 "use client";
 import AnimatedWordType from "@/components/AnimatedWordType";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
+import FloatingParticles from "@/components/FloatingParticles";
 import { useAuthNavigation } from "@/hooks/useAuthNavigation";
 import { usePrivy } from "@privy-io/react-auth";
 import Image from "next/image";
@@ -30,20 +31,7 @@ export default function Home() {
         </div>
 
         {/* Floating Particles */}
-        <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-white/20 rounded-full animate-float"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${3 + Math.random() * 2}s`
-              }}
-            ></div>
-          ))}
-        </div>
+        <FloatingParticles />
         
         <header
           className={`w-full flex justify-between items-center px-4 md:px-8 py-6 border-b border-white/10 bg-black/20 backdrop-blur-2xl sticky top-0 z-50 ${
