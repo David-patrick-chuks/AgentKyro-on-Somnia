@@ -1,1 +1,1 @@
-Add performance metrics endpoint: GET /api/health/metrics
+Set up Cloudinary for image and video management
