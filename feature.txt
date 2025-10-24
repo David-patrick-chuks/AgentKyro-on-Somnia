@@ -1,1 +1,1 @@
-Optimize Contact model with indexed fields for faster queries
+Add notification preferences to Notification model
