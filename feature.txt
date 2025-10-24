@@ -1,1 +1,1 @@
-Add team transaction support: POST /api/transactions/team
+Implement offline transaction queue: POST /api/transactions/queue
