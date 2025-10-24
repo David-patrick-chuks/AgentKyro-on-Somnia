@@ -1,1 +1,1 @@
-Update .gitignore to exclude sensitive files and build artifacts
+Remove backend/.env.example for security compliance
