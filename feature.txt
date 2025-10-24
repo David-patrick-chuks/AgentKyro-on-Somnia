@@ -1,1 +1,1 @@
-Set up notification system: GET/POST /api/notifications
+Add notification subscription management: POST/DELETE /api/notifications/subscribe
