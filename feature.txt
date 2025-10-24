@@ -1,1 +1,1 @@
-Create chat-based UI for token swap commands
+Add natural language processing with Google Gemini AI
