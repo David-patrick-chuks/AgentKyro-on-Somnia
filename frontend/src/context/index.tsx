@@ -1,9 +1,10 @@
 "use client";
 
-import React, { type ReactNode } from "react";
+import AuthRedirect from "@/components/AuthRedirect";
+import { privyAppId, supportedChains } from "@/config";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { privyAppId, supportedChains } from "@/config";
+import { type ReactNode } from "react";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,10 @@ export default function ContextProvider({ children }: Props) {
         defaultChain: supportedChains[0],
       }}
     >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthRedirect />
+        {children}
+      </QueryClientProvider>
     </PrivyProvider>
   );
 }

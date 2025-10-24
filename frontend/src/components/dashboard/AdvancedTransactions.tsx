@@ -1,5 +1,5 @@
 "use client";
-import { AgentKyroApiClient } from "@/utils/agentkyroApi";
+import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { FaClock, FaEdit, FaPause, FaPlay, FaPlus, FaTrash } from "react-icons/fa";
@@ -51,7 +51,7 @@ export default function AdvancedTransactions() {
     try {
       setLoading(true);
       setError(null);
-      const response = await AgentKyroApiClient.getScheduledTransactions(walletAddress);
+      const response = await AgentKyroApiClient.transactions.getScheduledTransactions(walletAddress);
       
       if (response.success && response.data) {
         setTransactions(response.data);
@@ -76,7 +76,7 @@ export default function AdvancedTransactions() {
         recurring: formData.recurring.frequency ? formData.recurring : undefined,
       };
 
-      const response = await AgentKyroApiClient.createScheduledTransaction(walletAddress, payload);
+      const response = await AgentKyroApiClient.transactions.createScheduledTransaction(walletAddress, payload);
       
       if (response.success) {
         setShowCreateModal(false);
@@ -106,7 +106,7 @@ export default function AdvancedTransactions() {
         recurring: formData.recurring.frequency ? formData.recurring : undefined,
       };
 
-      const response = await AgentKyroApiClient.updateScheduledTransaction(walletAddress, editingTransaction.id, payload);
+      const response = await AgentKyroApiClient.transactions.updateScheduledTransaction(walletAddress, editingTransaction.id, payload);
       
       if (response.success) {
         setEditingTransaction(null);
@@ -130,7 +130,7 @@ export default function AdvancedTransactions() {
     if (!confirm("Are you sure you want to cancel this transaction?")) return;
 
     try {
-      const response = await AgentKyroApiClient.deleteScheduledTransaction(walletAddress, transactionId);
+      const response = await AgentKyroApiClient.transactions.deleteScheduledTransaction(walletAddress, transactionId);
       
       if (response.success) {
         fetchTransactions();

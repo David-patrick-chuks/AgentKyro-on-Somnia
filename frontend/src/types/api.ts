@@ -150,12 +150,14 @@ export interface TransactionHistoryParams {
   endDate?: string;
   page?: number;
   limit?: number;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface NotificationParams {
   unread?: boolean;
   page?: number;
   limit?: number;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface HealthStatus {

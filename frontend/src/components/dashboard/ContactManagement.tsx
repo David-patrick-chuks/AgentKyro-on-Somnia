@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { AgentKyroApiClient, Contact } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
-import { AgentKyroApiClient, Contact } from "@/utils/agentkyroApi";
-import { FaPlus, FaSearch, FaEdit, FaTrash, FaCheck, FaTimes, FaUsers, FaShieldAlt } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaCheck, FaEdit, FaPlus, FaSearch, FaShieldAlt, FaTrash, FaUsers } from "react-icons/fa";
 
 export default function ContactManagement() {
   const { user } = usePrivy();
@@ -36,7 +36,7 @@ export default function ContactManagement() {
     try {
       setLoading(true);
       setError(null);
-      const response = await AgentKyroApiClient.getContacts(walletAddress);
+      const response = await AgentKyroApiClient.contacts.getContacts(walletAddress);
       
       if (response.success && response.data) {
         setContacts(response.data);
@@ -52,7 +52,7 @@ export default function ContactManagement() {
 
   const fetchGroups = async () => {
     try {
-      const response = await AgentKyroApiClient.getContactGroups(walletAddress);
+      const response = await AgentKyroApiClient.contacts.getContactGroups(walletAddress);
       if (response.success && response.data) {
         setGroups(response.data);
       }
@@ -64,7 +64,7 @@ export default function ContactManagement() {
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await AgentKyroApiClient.addContact(walletAddress, formData);
+      const response = await AgentKyroApiClient.contacts.addContact(walletAddress, formData);
       
       if (response.success) {
         setShowAddModal(false);
@@ -84,7 +84,7 @@ export default function ContactManagement() {
     if (!editingContact) return;
 
     try {
-      const response = await AgentKyroApiClient.updateContact(walletAddress, editingContact.id, formData);
+      const response = await AgentKyroApiClient.contacts.updateContact(walletAddress, editingContact.id, formData);
       
       if (response.success) {
         setEditingContact(null);
@@ -103,7 +103,7 @@ export default function ContactManagement() {
     if (!confirm("Are you sure you want to delete this contact?")) return;
 
     try {
-      const response = await AgentKyroApiClient.deleteContact(walletAddress, contactId);
+      const response = await AgentKyroApiClient.contacts.deleteContact(walletAddress, contactId);
       
       if (response.success) {
         fetchContacts();
@@ -117,12 +117,12 @@ export default function ContactManagement() {
 
   const handleVerifyContact = async (contact: Contact) => {
     try {
-      const response = await AgentKyroApiClient.verifyContact(walletAddress, contact.address);
+      const response = await AgentKyroApiClient.contacts.verifyContact(walletAddress, contact.address);
       
       if (response.success && response.data) {
         // Update the contact with verification status
         const updatedContact = { ...contact, verified: response.data.verified };
-        await AgentKyroApiClient.updateContact(walletAddress, contact.id, updatedContact);
+        await AgentKyroApiClient.contacts.updateContact(walletAddress, contact.id, updatedContact);
         fetchContacts();
       } else {
         setError(response.error || "Failed to verify contact");

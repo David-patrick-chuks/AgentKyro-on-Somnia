@@ -1,12 +1,12 @@
+import { ApiResponse, NotificationParams, NotificationSubscription } from '@/types/api';
 import { BaseApiClient } from './base';
-import { NotificationSubscription, NotificationParams, ApiResponse } from '@/types/api';
 
 export class NotificationApiClient extends BaseApiClient {
   static async getNotifications(
     walletAddress: string, 
     params?: NotificationParams
   ): Promise<ApiResponse<unknown>> {
-    return this.get<unknown>('/notifications', walletAddress, params);
+    return this.get<unknown>('/notifications', walletAddress, params as Record<string, string | number | boolean | undefined>);
   }
 
   static async markNotificationsAsRead(

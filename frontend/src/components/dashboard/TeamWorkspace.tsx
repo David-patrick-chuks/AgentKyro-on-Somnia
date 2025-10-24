@@ -1,5 +1,5 @@
 "use client";
-import { AgentKyroApiClient, Team } from "@/utils/agentkyroApi";
+import { AgentKyroApiClient, Team } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { FaEdit, FaPlus, FaTimes, FaTrash, FaUserPlus, FaUsers } from "react-icons/fa";
@@ -31,7 +31,7 @@ export default function TeamWorkspace() {
     try {
       setLoading(true);
       setError(null);
-      const response = await AgentKyroApiClient.getTeams(walletAddress);
+      const response = await AgentKyroApiClient.teams.getTeams(walletAddress);
       
       if (response.success && response.data) {
         setTeams(response.data);
@@ -48,7 +48,7 @@ export default function TeamWorkspace() {
   const handleCreateTeam = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await AgentKyroApiClient.createTeam(walletAddress, formData);
+      const response = await AgentKyroApiClient.teams.createTeam(walletAddress, formData);
       
       if (response.success) {
         setShowCreateModal(false);
@@ -67,7 +67,7 @@ export default function TeamWorkspace() {
     if (!editingTeam) return;
 
     try {
-      const response = await AgentKyroApiClient.updateTeam(walletAddress, editingTeam.id, formData);
+      const response = await AgentKyroApiClient.teams.updateTeam(walletAddress, editingTeam.id, formData);
       
       if (response.success) {
         setEditingTeam(null);
@@ -85,7 +85,7 @@ export default function TeamWorkspace() {
     if (!confirm("Are you sure you want to delete this team?")) return;
 
     try {
-      const response = await AgentKyroApiClient.deleteTeam(walletAddress, teamId);
+      const response = await AgentKyroApiClient.teams.deleteTeam(walletAddress, teamId);
       
       if (response.success) {
         fetchTeams();

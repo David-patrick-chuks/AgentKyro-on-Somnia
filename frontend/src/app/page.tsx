@@ -1,6 +1,7 @@
 "use client";
 import AnimatedWordType from "@/components/AnimatedWordType";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
+import { useAuthNavigation } from "@/hooks/useAuthNavigation";
 import { usePrivy } from "@privy-io/react-auth";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import { FaBolt, FaChartLine, FaClock, FaLanguage, FaMobileAlt, FaQrcode, FaRobo
 
 export default function Home() {
   const { authenticated } = usePrivy();
+  const { navigateToDashboard } = useAuthNavigation();
   const [showConnectMsg, setShowConnectMsg] = useState(false);
 
   return (
@@ -118,15 +120,16 @@ export default function Home() {
                 </button>
 
                 {authenticated && (
-                  <Link href="/dashboard">
-                    <button className="group px-10 py-5 text-xl font-bold rounded-2xl cursor-pointer border border-white/20 bg-white/10 backdrop-blur-xl text-white shadow-2xl hover:scale-105 hover:bg-white/20 transition-all duration-500 hover:shadow-white/20 overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-slate-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                      <span className="relative z-10 flex items-center gap-3">
-                        <FaChartLine className="text-xl" />
-                        DASHBOARD
-                      </span>
-                    </button>
-                  </Link>
+                  <button 
+                    onClick={navigateToDashboard}
+                    className="group px-10 py-5 text-xl font-bold rounded-2xl cursor-pointer border border-white/20 bg-white/10 backdrop-blur-xl text-white shadow-2xl hover:scale-105 hover:bg-white/20 transition-all duration-500 hover:shadow-white/20 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-slate-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <span className="relative z-10 flex items-center gap-3">
+                      <FaChartLine className="text-xl" />
+                      DASHBOARD
+                    </span>
+                  </button>
                 )}
 
                 <Link href="#features">

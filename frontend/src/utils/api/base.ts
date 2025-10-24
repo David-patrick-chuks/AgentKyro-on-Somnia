@@ -43,7 +43,7 @@ export class BaseApiClient {
   protected static async get<T>(
     url: string,
     walletAddress: string,
-    params?: Record<string, string | number | boolean>
+    params?: Record<string, string | number | boolean | undefined>
   ): Promise<ApiResponse<T>> {
     const queryParams = new URLSearchParams();
     if (params) {

@@ -25,7 +25,7 @@ export class AnalyticsApiClient extends BaseApiClient {
     walletAddress: string, 
     params?: TransactionHistoryParams
   ): Promise<ApiResponse<unknown>> {
-    return this.get<unknown>('/analytics/transaction-history', walletAddress, params);
+    return this.get<unknown>('/analytics/transaction-history', walletAddress, params as Record<string, string | number | boolean | undefined>);
   }
 
   static async getPredictions(walletAddress: string): Promise<ApiResponse<PredictionData>> {

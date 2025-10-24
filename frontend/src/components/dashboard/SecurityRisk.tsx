@@ -49,7 +49,7 @@ export default function SecurityRisk() {
 
     setRiskLoading(true);
     try {
-      const result = await AgentKyroApiClient.assessRisk(walletAddress, riskForm);
+      const result = await AgentKyroApiClient.security.assessRisk(walletAddress, riskForm);
       if (result.success) {
         setRiskResult(result.data);
       } else {
@@ -68,7 +68,7 @@ export default function SecurityRisk() {
 
     setReputationLoading(true);
     try {
-      const result = await AgentKyroApiClient.getAddressReputation(walletAddress, reputationAddress);
+      const result = await AgentKyroApiClient.security.getAddressReputation(walletAddress, reputationAddress);
       if (result.success) {
         setReputationResult(result.data);
       } else {
@@ -87,7 +87,7 @@ export default function SecurityRisk() {
 
     setScamLoading(true);
     try {
-      const result = await AgentKyroApiClient.detectScam(walletAddress, scamForm);
+      const result = await AgentKyroApiClient.security.detectScam(walletAddress, scamForm);
       if (result.success) {
         setScamResult(result.data);
       } else {
@@ -106,7 +106,7 @@ export default function SecurityRisk() {
 
     setValidationLoading(true);
     try {
-      const result = await AgentKyroApiClient.validateTransaction(walletAddress, {
+      const result = await AgentKyroApiClient.security.validateTransaction(walletAddress, {
         ...validationForm,
         from: walletAddress
       });

@@ -1,5 +1,5 @@
 "use client";
-import { AgentKyroApiClient } from "@/utils/agentkyroApi";
+import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState } from "react";
 import { FaDownload, FaEnvelope, FaFacebook, FaFilePdf, FaImage, FaLinkedin, FaQrcode, FaShare, FaTwitter } from "react-icons/fa";
@@ -49,7 +49,7 @@ export default function SharingIntegration() {
 
     setQrLoading(true);
     try {
-      const result = await AgentKyroApiClient.generateQR(walletAddress, qrTransactionId);
+      const result = await AgentKyroApiClient.sharing.generateQR(walletAddress, qrTransactionId);
       if (result.success) {
         setQrResult(result.data);
       } else {
@@ -68,7 +68,7 @@ export default function SharingIntegration() {
 
     setReceiptLoading(true);
     try {
-      const result = await AgentKyroApiClient.generateReceipt(walletAddress, receiptForm.transactionId, receiptForm.format);
+      const result = await AgentKyroApiClient.sharing.generateReceipt(walletAddress, receiptForm.transactionId, receiptForm.format);
       if (result.success) {
         setReceiptResult(result.data);
       } else {
@@ -87,7 +87,7 @@ export default function SharingIntegration() {
 
     setSocialLoading(true);
     try {
-      const result = await AgentKyroApiClient.createSocialShare(walletAddress, socialForm);
+      const result = await AgentKyroApiClient.sharing.createSocialShare(walletAddress, socialForm);
       if (result.success) {
         setSocialResult(result.data);
       } else {
@@ -113,7 +113,7 @@ export default function SharingIntegration() {
         data: emailForm.template === 'custom' ? { html: emailForm.customData } : { transactionId: emailForm.transactionId }
       };
       
-      const result = await AgentKyroApiClient.sendEmail(walletAddress, emailData);
+      const result = await AgentKyroApiClient.sharing.sendEmail(walletAddress, emailData);
       if (result.success) {
         setEmailResult(result.data);
       } else {

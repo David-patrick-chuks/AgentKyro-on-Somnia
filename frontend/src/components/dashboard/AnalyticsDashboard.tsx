@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { AgentKyroApiClient, AnalyticsData } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
-import { AgentKyroApiClient, AnalyticsData } from "@/utils/agentkyroApi";
-import { FaChartLine, FaArrowUp, FaArrowDown, FaWallet, FaExchangeAlt, FaChartPie } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaArrowDown, FaArrowUp, FaChartLine, FaChartPie, FaExchangeAlt, FaWallet } from "react-icons/fa";
 
 export default function AnalyticsDashboard() {
   const { user } = usePrivy();
@@ -23,7 +23,7 @@ export default function AnalyticsDashboard() {
     try {
       setLoading(true);
       setError(null);
-      const response = await AgentKyroApiClient.getAnalyticsDashboard(walletAddress, selectedPeriod);
+      const response = await AgentKyroApiClient.analytics.getAnalyticsDashboard(walletAddress, selectedPeriod);
       
       if (response.success && response.data) {
         setAnalytics(response.data);
