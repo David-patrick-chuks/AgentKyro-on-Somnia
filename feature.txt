@@ -1,1 +1,1 @@
-Create conditional payment endpoint: POST /api/transactions/conditional
+Implement scheduled transaction endpoint: POST /api/transactions/scheduled
