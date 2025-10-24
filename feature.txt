@@ -1,1 +1,1 @@
-Implement transaction receipt generation: POST /api/sharing/generate-receipt
+Add social media sharing: POST /api/sharing/social-share
