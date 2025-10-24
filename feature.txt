@@ -1,1 +1,1 @@
-Add contact management model and POST /api/contacts
+Implement contact verification endpoint: POST /api/contacts/verify
