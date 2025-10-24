@@ -1,1 +1,1 @@
-Add PWA features for native app installation
+Implement smart command suggestions in chat UI
