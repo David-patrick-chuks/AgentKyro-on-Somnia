@@ -1,1 +1,1 @@
-Update sharingRoutes.ts to generate AR-compatible QR codes
+Refactor teamRoutes.ts for group transaction approvals
