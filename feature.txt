@@ -1,1 +1,1 @@
-Implement transaction history search: GET /api/analytics/transactions
+Add transaction prediction logic: GET /api/analytics/predictions
