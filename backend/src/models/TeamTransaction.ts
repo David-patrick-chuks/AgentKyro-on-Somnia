@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { ITeamTransaction, IApproval } from '../types';
+import { IApproval, ITeamTransaction } from '../types';
 
 const approvalSchema = new Schema<IApproval>({
   walletAddress: {
@@ -25,13 +25,11 @@ const teamTransactionSchema = new Schema<ITeamTransaction>({
   teamId: {
     type: Schema.Types.ObjectId,
     ref: 'Team',
-    required: true,
-    index: true
+    required: true
   },
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   amount: {
     type: String,

@@ -12,7 +12,7 @@ const router = Router();
 // Description: Get all saved contacts for the user
 router.get('/',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { group } = req.query;
 
@@ -37,7 +37,7 @@ router.get('/',
 router.post('/',
   extractWalletAddress,
   validateRequiredFields(['name', 'address']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { name, address, group, verified } = req.body;
 
@@ -88,7 +88,7 @@ router.post('/',
 router.put('/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const contactId = req.params.id;
     const { name, address, group, verified } = req.body;
@@ -152,7 +152,7 @@ router.put('/:id',
 router.delete('/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const contactId = req.params.id;
 
@@ -181,7 +181,7 @@ router.delete('/:id',
 // Description: Get all contact groups created by the user
 router.get('/groups',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     const groups = await Contact.distinct('group', { walletAddress: userWalletAddress });
@@ -200,7 +200,7 @@ router.get('/groups',
 router.post('/verify',
   extractWalletAddress,
   validateRequiredFields(['address']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { address } = req.body;
 
@@ -254,7 +254,7 @@ router.post('/verify',
 // Description: Get smart contact suggestions based on query
 router.get('/suggestions',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { query } = req.query;
 

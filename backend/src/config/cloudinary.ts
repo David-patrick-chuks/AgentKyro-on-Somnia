@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
+// import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,21 +10,14 @@ cloudinary.config({
 });
 
 // Configure multer for Cloudinary storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'agentkyro',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'pdf'],
-    transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
-  } as any
-});
+const storage = multer.memoryStorage();
 
 export const upload = multer({ 
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     // Check file type
     if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
       cb(null, true);
@@ -65,6 +58,10 @@ export const generateQRCode = async (data: string): Promise<string> => {
   } catch (error) {
     throw new Error(`QR Code generation failed: ${error}`);
   }
+};
+
+export const generateShareUrl = (publicId: string): string => {
+  return cloudinary.url(publicId, { secure: true });
 };
 
 export default cloudinary;

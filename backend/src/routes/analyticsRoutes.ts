@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { asyncHandler } from '../middleware/errorMiddleware';
 import { extractWalletAddress } from '../middleware/authMiddleware';
+import { asyncHandler } from '../middleware/errorMiddleware';
 import { Transaction } from '../models/Transaction';
-import { ApiResponse, PaginatedResponse, AnalyticsData, PortfolioData, PredictionData } from '../types';
+import { AnalyticsData, ApiResponse, PaginatedResponse, PortfolioData, PredictionData } from '../types';
 import { calculatePagination } from '../utils/helpers';
 
 const router = Router();
@@ -11,7 +11,7 @@ const router = Router();
 // Description: Get comprehensive analytics dashboard data
 router.get('/dashboard',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { period = '30d' } = req.query;
 
@@ -121,7 +121,7 @@ router.get('/dashboard',
 // Description: Analyze spending patterns over time
 router.get('/spending-patterns',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { period = '30d', groupBy = 'day' } = req.query;
 
@@ -215,7 +215,7 @@ router.get('/spending-patterns',
 // Description: Track portfolio value and performance metrics
 router.get('/portfolio-tracking',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     // Get all transactions
@@ -271,7 +271,7 @@ router.get('/portfolio-tracking',
 // Description: Search and filter transaction history
 router.get('/transaction-history',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { 
       search, 
@@ -319,7 +319,7 @@ router.get('/transaction-history',
 
     const pagination = calculatePagination(parseInt(page), parseInt(limit), total);
 
-    const response: PaginatedResponse = {
+    const response: PaginatedResponse<any> = {
       success: true,
       data: transactions,
       total: pagination.total,
@@ -336,7 +336,7 @@ router.get('/transaction-history',
 // Description: Get AI-powered transaction predictions and forecasts
 router.get('/predictions',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     // Get recent transactions for analysis

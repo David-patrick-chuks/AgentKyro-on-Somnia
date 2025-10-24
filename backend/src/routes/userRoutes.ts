@@ -10,7 +10,7 @@ const router = Router();
 // Description: Create or update user profile based on wallet address
 router.post('/create-or-update', 
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const { walletAddress, name, preferences } = req.body;
     const userWalletAddress = req.walletAddress;
 
@@ -55,7 +55,7 @@ router.post('/create-or-update',
 // Description: Get user profile by wallet address
 router.get('/profile',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     const user = await User.findOne({ walletAddress: userWalletAddress });
@@ -80,7 +80,7 @@ router.get('/profile',
 // Description: Update user profile and preferences
 router.put('/profile',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { name, preferences } = req.body;
 

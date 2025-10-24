@@ -4,8 +4,7 @@ import { IScheduledTransaction } from '../types';
 const scheduledTransactionSchema = new Schema<IScheduledTransaction>({
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   amount: {
     type: String,
@@ -23,8 +22,7 @@ const scheduledTransactionSchema = new Schema<IScheduledTransaction>({
   },
   scheduledFor: {
     type: Date,
-    required: true,
-    index: true
+    required: true
   },
   recurring: {
     frequency: {

@@ -4,8 +4,7 @@ import { IConditionalTransaction } from '../types';
 const conditionalTransactionSchema = new Schema<IConditionalTransaction>({
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   amount: {
     type: String,

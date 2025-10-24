@@ -12,7 +12,7 @@ const router = Router();
 router.post('/risk-assessment',
   extractWalletAddress,
   validateRequiredFields(['address', 'amount', 'token']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { address, amount, token } = req.body;
 
@@ -101,7 +101,7 @@ router.post('/risk-assessment',
 // Description: Get reputation and transaction history of a wallet address
 router.get('/address-reputation/:address',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const address = req.params.address;
 
@@ -158,7 +158,7 @@ router.get('/address-reputation/:address',
 router.post('/scam-detection',
   extractWalletAddress,
   validateRequiredFields(['address']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { address, message } = req.body;
 
@@ -252,7 +252,7 @@ router.post('/scam-detection',
 router.post('/transaction-validation',
   extractWalletAddress,
   validateRequiredFields(['from', 'to', 'amount', 'token']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { from, to, amount, token, gasEstimate } = req.body;
 

@@ -4,8 +4,7 @@ import { IQueuedTransaction } from '../types';
 const queuedTransactionSchema = new Schema<IQueuedTransaction>({
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   amount: {
     type: String,
@@ -22,8 +21,7 @@ const queuedTransactionSchema = new Schema<IQueuedTransaction>({
     lowercase: true
   },
   scheduledFor: {
-    type: Date,
-    index: true
+    type: Date
   },
   status: {
     type: String,

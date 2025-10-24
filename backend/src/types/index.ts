@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Document, Types } from 'mongoose';
 
 // Base interfaces
@@ -149,8 +150,9 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 }
 
 // Request types
-export interface AuthenticatedRequest extends express.Request {
+export interface AuthenticatedRequest extends Request {
   walletAddress?: string;
+  user?: any;
 }
 
 // Analytics types

@@ -13,7 +13,7 @@ const router = Router();
 router.post('/conditional',
   extractWalletAddress,
   validateRequiredFields(['amount', 'token', 'recipient', 'condition']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { amount, token, recipient, condition } = req.body;
 
@@ -63,7 +63,7 @@ router.post('/conditional',
 // Description: Get all active conditional transactions
 router.get('/conditional',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     const conditionalTransactions = await ConditionalTransaction.find({
@@ -85,7 +85,7 @@ router.get('/conditional',
 router.delete('/conditional/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const conditionalId = req.params.id;
 
@@ -120,7 +120,7 @@ router.delete('/conditional/:id',
 router.post('/scheduled',
   extractWalletAddress,
   validateRequiredFields(['amount', 'token', 'recipient', 'scheduledFor']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { amount, token, recipient, scheduledFor, recurring } = req.body;
 
@@ -190,7 +190,7 @@ router.post('/scheduled',
 // Description: Get all scheduled transactions
 router.get('/scheduled',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { status } = req.query;
 
@@ -216,7 +216,7 @@ router.get('/scheduled',
 router.put('/scheduled/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const scheduledId = req.params.id;
     const { scheduledFor, recurring } = req.body;
@@ -282,7 +282,7 @@ router.put('/scheduled/:id',
 router.delete('/scheduled/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const scheduledId = req.params.id;
 

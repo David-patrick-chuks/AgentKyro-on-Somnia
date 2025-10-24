@@ -5,8 +5,7 @@ const userSchema = new Schema<IUser>({
   walletAddress: {
     type: String,
     required: true,
-    unique: true,
-    index: true
+    unique: true
   },
   name: {
     type: String,

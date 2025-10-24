@@ -12,7 +12,7 @@ const router = Router();
 // Description: Get all teams the user is a member of
 router.get('/',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     const teams = await Team.find({
@@ -36,7 +36,7 @@ router.get('/',
 router.post('/',
   extractWalletAddress,
   validateRequiredFields(['name', 'members']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { name, description, members } = req.body;
 
@@ -115,7 +115,7 @@ router.post('/',
 router.put('/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
     const { name, description, members } = req.body;
@@ -195,7 +195,7 @@ router.put('/:id',
 router.delete('/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
 
@@ -229,7 +229,7 @@ router.post('/:id/members',
   extractWalletAddress,
   validateObjectId('id'),
   validateRequiredFields(['walletAddress', 'name']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
     const { walletAddress, name } = req.body;
@@ -291,7 +291,7 @@ router.post('/:id/members',
 router.delete('/:id/members/:memberId',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
     const memberWalletAddress = req.params.memberId;
@@ -345,7 +345,7 @@ router.post('/:id/transactions',
   extractWalletAddress,
   validateObjectId('id'),
   validateRequiredFields(['amount', 'token', 'recipients']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
     const { amount, token, recipients, requiresApproval } = req.body;
@@ -410,7 +410,7 @@ router.post('/:id/transactions',
 router.get('/:id/approvals',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
 
@@ -451,7 +451,7 @@ router.post('/:id/approvals/:approvalId',
   validateObjectId('id'),
   validateObjectId('approvalId'),
   validateRequiredFields(['action', 'signature']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const teamId = req.params.id;
     const approvalId = req.params.approvalId;

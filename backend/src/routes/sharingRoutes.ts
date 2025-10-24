@@ -15,7 +15,7 @@ const router = Router();
 router.post('/generate-qr',
   extractWalletAddress,
   validateRequiredFields(['transactionId']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { transactionId } = req.body;
 
@@ -73,7 +73,7 @@ router.post('/generate-qr',
 router.post('/generate-receipt',
   extractWalletAddress,
   validateRequiredFields(['transactionId', 'format']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { transactionId, format } = req.body;
 
@@ -171,7 +171,7 @@ router.post('/generate-receipt',
 router.post('/social-share',
   extractWalletAddress,
   validateRequiredFields(['transactionId', 'platform']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { transactionId, platform, message } = req.body;
 
@@ -234,7 +234,7 @@ router.post('/social-share',
 router.post('/send-email',
   extractWalletAddress,
   validateRequiredFields(['to', 'subject', 'template', 'data']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { to, subject, template, data } = req.body;
 
@@ -255,7 +255,7 @@ router.post('/send-email',
     }
 
     // Create email transporter
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT || '587'),
       secure: false,

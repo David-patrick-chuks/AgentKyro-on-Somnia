@@ -4,8 +4,7 @@ import { ITransaction } from '../types';
 const transactionSchema = new Schema<ITransaction>({
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   from: {
     type: String,

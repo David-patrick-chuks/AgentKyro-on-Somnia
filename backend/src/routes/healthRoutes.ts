@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { asyncHandler } from '../middleware/errorMiddleware';
 import mongoose from 'mongoose';
+import { asyncHandler } from '../middleware/errorMiddleware';
 import { ApiResponse } from '../types';
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 // GET /api/health
 // Description: Check system health and service status
 router.get('/',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const startTime = Date.now();
     
     // Check database connection
@@ -16,7 +16,11 @@ router.get('/',
     let dbError = null;
     
     try {
-      await mongoose.connection.db.admin().ping();
+      if (mongoose.connection.db) {
+        await mongoose.connection.db.admin().ping();
+      } else {
+        throw new Error('Database not connected');
+      }
     } catch (error) {
       dbStatus = 'unhealthy';
       dbError = error;
@@ -72,7 +76,7 @@ router.get('/',
 // GET /api/metrics
 // Description: Get system performance metrics
 router.get('/metrics',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req: any, res: any) => {
     // Get memory usage
     const memoryUsage = process.memoryUsage();
     
@@ -82,14 +86,16 @@ router.get('/metrics',
     // Get database stats
     let dbStats = null;
     try {
-      const stats = await mongoose.connection.db.stats();
-      dbStats = {
-        collections: stats.collections,
-        dataSize: stats.dataSize,
-        storageSize: stats.storageSize,
-        indexes: stats.indexes,
-        indexSize: stats.indexSize
-      };
+      const stats = mongoose.connection.db ? await mongoose.connection.db.stats() : null;
+      if (stats) {
+        dbStats = {
+          collections: stats.collections,
+          dataSize: stats.dataSize,
+          storageSize: stats.storageSize,
+          indexes: stats.indexes,
+          indexSize: stats.indexSize
+        };
+      }
     } catch (error) {
       dbStats = { error: 'Unable to fetch database stats' };
     }
@@ -97,9 +103,9 @@ router.get('/metrics',
     // Get collection counts
     const collectionCounts: any = {};
     try {
-      const collections = await mongoose.connection.db.listCollections().toArray();
+      const collections = mongoose.connection.db ? await mongoose.connection.db.listCollections().toArray() : [];
       for (const collection of collections) {
-        const count = await mongoose.connection.db.collection(collection.name).countDocuments();
+        const count = mongoose.connection.db ? await mongoose.connection.db.collection(collection.name).countDocuments() : 0;
         collectionCounts[collection.name] = count;
       }
     } catch (error) {

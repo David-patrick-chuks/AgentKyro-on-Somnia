@@ -4,8 +4,7 @@ import { INotification } from '../types';
 const notificationSchema = new Schema<INotification>({
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   type: {
     type: String,

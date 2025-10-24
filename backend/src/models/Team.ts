@@ -29,8 +29,7 @@ const teamSchema = new Schema<ITeam>({
   },
   ownerWalletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   members: [teamMemberSchema],
   settings: {

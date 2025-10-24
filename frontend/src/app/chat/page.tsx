@@ -7,20 +7,20 @@ import { cn } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
 import { ethers } from "ethers";
 import {
-  AlertCircle,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  Copy,
-  ExternalLink,
-  LogOut,
-  Menu,
-  MessageSquare,
-  Plus,
-  Send,
-  Settings,
-  Trash2,
-  X,
+    AlertCircle,
+    CheckCircle,
+    ChevronLeft,
+    ChevronRight,
+    Copy,
+    ExternalLink,
+    LogOut,
+    Menu,
+    MessageSquare,
+    Plus,
+    Send,
+    Settings,
+    Trash2,
+    X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FaMicrophone } from "react-icons/fa6";
@@ -698,7 +698,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
 
   return (
     <>
-      <div className="min-h-screen bg-black flex font-sans">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-black to-slate-900 flex font-sans">
         {/* Edge case banners */}
         <div className="fixed top-0 left-0 w-full z-[100] pointer-events-none">
           {isOffline && (
@@ -722,7 +722,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
         {/* Sidebar - ChatGPT Style Mobile */}
         <div
           className={cn(
-            "flex flex-col bg-gray-900 border-r border-gray-700 transition-all duration-300 ease-in-out",
+            "flex flex-col bg-white/5 backdrop-blur-xl border-r border-white/10 transition-all duration-300 ease-in-out",
 
             "fixed left-0 top-0 min-h-screen z-[60]",
             showMobileSidebar ? "translate-x-0 w-64" : "-translate-x-full w-64",
@@ -732,9 +732,9 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
           )}
         >
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <div className="flex items-center justify-between p-4 border-b border-white/10">
             {(showMobileSidebar || !sidebarCollapsed) && (
-              <h2 className="text-lg font-semibold text-white">AgentKyro</h2>
+              <h2 className="text-lg font-semibold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">AgentKyro</h2>
             )}
 
             {/* Mobile close button */}
@@ -910,7 +910,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
           )}
         >
           {/* Header */}
-          <header className="backdrop-blur-sm border-b border-gray-800/50 p-3 md:p-4 sticky top-0 z-50 bg-black/80">
+          <header className="backdrop-blur-xl border-b border-white/10 p-3 md:p-4 sticky top-0 z-50 bg-white/5">
             <div className=" mx-auto w-full flex items-center justify-between">
               {/* Left side - Mobile menu + App name like ChatGPT */}
               <div className="flex items-center gap-3">
@@ -922,7 +922,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
                   <Menu className="h-5 w-5" />
                 </button>
 
-                <h1 className="text-base md:text-lg font-semibold text-white">
+                <h1 className="text-base md:text-lg font-semibold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                   AgentKyro
                 </h1>
               </div>
@@ -930,7 +930,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
               {/* Right side - Wallet connection */}
               <div className="flex items-center gap-3">
                 {authenticated ? (
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-[#1E3DFF] via-[#7A1EFF] to-[#FF1E99] shadow-lg hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 border border-white/10 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur-xl shadow-lg hover:shadow-xl hover:shadow-white/25 transition-all duration-300 border border-white/20 backdrop-blur-sm">
                     <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></span>
                     <span className="text-xs md:text-sm text-white font-medium block">
                       Connected
@@ -1122,7 +1122,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
             )}
           </div>
           {/* Fixed Input Box at Bottom */}
-          <div className="sticky bottom-0 left-0 w-full bg-black/95 z-50 py-4 border-t border-gray-800">
+          <div className="sticky bottom-0 left-0 w-full bg-white/5 backdrop-blur-xl z-50 py-4 border-t border-white/10">
             <div className="flex flex-row gap-3 items-stretch sm:items-center w-full max-w-4xl mx-auto px-4">
               {/* Input Field with Microphone */}
               <div className="flex-1 relative">
@@ -1136,9 +1136,9 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
                   type="text"
                   className={`w-full px-4 py-3 pr-12 rounded-2xl border transition-all text-base ${
                     isListening
-                      ? "border-red-400 bg-red-900/20 focus:ring-red-500"
-                      : "border-gray-600 bg-gray-900/50 focus:ring-purple-500"
-                  } text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent`}
+                      ? "border-red-400/50 bg-red-900/20 focus:ring-red-500"
+                      : "border-white/20 bg-white/5 focus:ring-white/50"
+                  } text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:border-transparent backdrop-blur-xl`}
                   placeholder={
                     isOffline
                       ? "You are offline. Please reconnect."
@@ -1196,7 +1196,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
                   isOffline ||
                   unsupportedBrowser
                 }
-                className="px-6 py-3 rounded-2xl font-semibold bg-gradient-to-r from-[#1E3DFF] via-[#7A1EFF] to-[#FF1E99] text-white shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all flex items-center justify-center gap-2 text-base sm:w-auto"
+                className="px-6 py-3 rounded-2xl font-semibold bg-white/10 backdrop-blur-xl text-white shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all flex items-center justify-center gap-2 text-base sm:w-auto border border-white/20 hover:bg-white/20"
               >
                 <Send className="w-4 h-4" />
                 <span>Send</span>
@@ -1212,7 +1212,7 @@ ${balanceText}\n\nPlease confirm the transaction details below:`,
                 <button
                   key={idx}
                   onClick={() => setInput(suggestion)}
-                  className="text-sm px-1.5 py-1.5 bg-gray-800/80 text-gray-300 rounded-full hover:bg-gray-700 hover:text-white transition-all border border-gray-700/50 hover:border-gray-600"
+                  className="text-sm px-1.5 py-1.5 bg-white/5 backdrop-blur-xl text-slate-300 rounded-full hover:bg-white/10 hover:text-white transition-all border border-white/10 hover:border-white/30"
                   disabled={
                     isTyping ||
                     !!pendingConfirmation ||

@@ -4,8 +4,7 @@ import { IContact } from '../types';
 const contactSchema = new Schema<IContact>({
   walletAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   name: {
     type: String,

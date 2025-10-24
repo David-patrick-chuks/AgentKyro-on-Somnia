@@ -12,7 +12,7 @@ const router = Router();
 // Description: Get user notifications with filtering options
 router.get('/',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { unread, page = 1, limit = 20 } = req.query;
 
@@ -31,7 +31,7 @@ router.get('/',
 
     const pagination = calculatePagination(parseInt(page), parseInt(limit), total);
 
-    const response: PaginatedResponse = {
+    const response: PaginatedResponse<any> = {
       success: true,
       data: notifications,
       total: pagination.total,
@@ -49,7 +49,7 @@ router.get('/',
 router.post('/mark-read',
   extractWalletAddress,
   validateRequiredFields(['notificationIds']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { notificationIds } = req.body;
 
@@ -95,7 +95,7 @@ router.post('/mark-read',
 router.post('/subscribe',
   extractWalletAddress,
   validateRequiredFields(['type', 'events']),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const { type, endpoint, events } = req.body;
 
@@ -160,7 +160,7 @@ router.post('/subscribe',
 // Description: Get user's notification subscriptions
 router.get('/subscriptions',
   extractWalletAddress,
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
 
     const subscriptions = await NotificationSubscription.find({
@@ -181,7 +181,7 @@ router.get('/subscriptions',
 router.delete('/subscriptions/:id',
   extractWalletAddress,
   validateObjectId('id'),
-  asyncHandler(async (req: any, res) => {
+  asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
     const subscriptionId = req.params.id;
 
