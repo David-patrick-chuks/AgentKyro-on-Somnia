@@ -1,1 +1,1 @@
-Integrate Sonner for toast notifications
+Add Framer Motion for UI animations
