@@ -1,1 +1,1 @@
-Add approval workflow for team transactions: POST /api/teams/:id/approvals
+Create analytics dashboard endpoint: GET /api/analytics/dashboard
