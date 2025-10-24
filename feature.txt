@@ -1,1 +1,1 @@
-Add contextual help for user commands in UI
+Implement auto-complete for chat input
