@@ -1,1 +1,1 @@
-Implement team member management: POST/DELETE /api/teams/:id/members
+Add approval workflow for team transactions: POST /api/teams/:id/approvals
