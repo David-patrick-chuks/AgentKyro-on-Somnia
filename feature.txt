@@ -1,1 +1,1 @@
-Add scam detection logic: POST /api/security/scam-detection
+Implement transaction validation: POST /api/security/validate-transaction
