@@ -1,1 +1,1 @@
-Document API endpoints in README for hackathon submission
+Update .gitignore to exclude sensitive files and build artifacts
