@@ -1,16 +1,19 @@
 "use client";
-import { FaChartLine, FaUsers, FaShieldAlt, FaQrcode, FaCog, FaRobot, FaClock, FaHome } from "react-icons/fa";
+import { useLogout } from "@privy-io/react-auth";
 import Link from "next/link";
+import { FaBell, FaChartLine, FaClock, FaHistory, FaQrcode, FaRobot, FaShieldAlt, FaSignOutAlt, FaUsers } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 type DashboardSection = 
   | "analytics"
   | "contacts" 
   | "teams"
   | "transactions"
+  | "transaction-history"
   | "security"
   | "sharing"
-  | "experience"
-  | "settings";
+  | "chat"
+  | "notifications";
 
 interface DashboardSidebarProps {
   activeSection: DashboardSection;
@@ -18,6 +21,13 @@ interface DashboardSidebarProps {
 }
 
 export default function DashboardSidebar({ activeSection, setActiveSection }: DashboardSidebarProps) {
+  const router = useRouter();
+  const { logout } = useLogout({
+    onSuccess: () => {
+      console.log('User successfully logged out');
+      router.push("/");
+    }
+  });
   const menuItems = [
     {
       id: "analytics" as DashboardSection,
@@ -44,6 +54,12 @@ export default function DashboardSidebar({ activeSection, setActiveSection }: Da
       description: "Advanced"
     },
     {
+      id: "transaction-history" as DashboardSection,
+      label: "Transaction History",
+      icon: <FaHistory className="text-xl" />,
+      description: "View & Search"
+    },
+    {
       id: "security" as DashboardSection,
       label: "Security",
       icon: <FaShieldAlt className="text-xl" />,
@@ -56,21 +72,21 @@ export default function DashboardSidebar({ activeSection, setActiveSection }: Da
       description: "Integration"
     },
     {
-      id: "experience" as DashboardSection,
-      label: "Experience",
+      id: "chat" as DashboardSection,
+      label: "Chat",
       icon: <FaRobot className="text-xl" />,
-      description: "Customization"
+      description: "AI Assistant"
     },
     {
-      id: "settings" as DashboardSection,
-      label: "Settings",
-      icon: <FaCog className="text-xl" />,
-      description: "Preferences"
+      id: "notifications" as DashboardSection,
+      label: "Notifications",
+      icon: <FaBell className="text-xl" />,
+      description: "Alerts & Subscriptions"
     }
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-black/20 backdrop-blur-2xl border-r border-white/10 z-50">
+    <aside className="fixed left-0 top-0 h-full w-64 bg-black/20 backdrop-blur-2xl border-r border-white/10 z-50 hidden md:block">
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
         <Link href="/" className="flex items-center gap-3">
@@ -78,7 +94,7 @@ export default function DashboardSidebar({ activeSection, setActiveSection }: Da
             <FaRobot className="text-white text-lg" />
           </div>
           <div>
-            <h2 className="text-white font-bold text-lg bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+            <h2 className="font-bold text-lg bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
               AgentKyro
             </h2>
             <p className="text-slate-400 text-xs">Dashboard</p>
@@ -118,26 +134,20 @@ export default function DashboardSidebar({ activeSection, setActiveSection }: Da
           </button>
         ))}
       </nav>
-
-      {/* Quick Actions */}
-      <div className="absolute bottom-4 left-4 right-4">
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-4">
-          <h3 className="text-white font-semibold text-sm mb-3">Quick Actions</h3>
-          <div className="space-y-2">
-            <Link href="/chat">
-              <button className="w-full flex items-center gap-2 p-2 bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/30 rounded-lg transition-all duration-300 text-white text-sm">
-                <FaRobot className="text-sm" />
-                Start Chat
-              </button>
-            </Link>
-            <Link href="/">
-              <button className="w-full flex items-center gap-2 p-2 bg-slate-800/20 hover:bg-slate-700/40 border border-slate-600/30 hover:border-slate-500/50 rounded-lg transition-all duration-300 text-slate-300 hover:text-white text-sm">
-                <FaHome className="text-sm" />
-                Home
-              </button>
-            </Link>
+      
+      {/* Logout Button */}
+      <div className="absolute bottom-6 left-6 right-6">
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 hover:border-white/10 border border-transparent transition-all duration-300 group"
+        >
+          <FaSignOutAlt className="text-xl" />
+          <div className="text-left flex-1">
+            <div className="font-medium text-sm text-slate-400 group-hover:text-white">
+              Logout
+            </div>
           </div>
-        </div>
+        </button>
       </div>
     </aside>
   );

@@ -1,8 +1,8 @@
 "use client";
 import { AgentKyroApiClient, Contact } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
-import { FaCheck, FaEdit, FaPlus, FaSearch, FaShieldAlt, FaTrash, FaUsers } from "react-icons/fa";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FaCheck, FaEdit, FaPlus, FaSearch, FaTrash, FaUsers } from "react-icons/fa";
 
 export default function ContactManagement() {
   const { user } = usePrivy();
@@ -14,25 +14,22 @@ export default function ContactManagement() {
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [modalError, setModalError] = useState<string | null>(null);
+  const isFetchingRef = useRef(false);
 
   // Form state
   const [formData, setFormData] = useState({
     name: "",
     address: "",
     group: "",
-    verified: false,
   });
 
   const walletAddress = user?.wallet?.address || "";
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchContacts();
-      fetchGroups();
-    }
-  }, [walletAddress]);
-
-  const fetchContacts = async () => {
+  const fetchContacts = useCallback(async () => {
+    if (isFetchingRef.current || !walletAddress) return;
+    
+    isFetchingRef.current = true;
     try {
       setLoading(true);
       setError(null);
@@ -47,10 +44,13 @@ export default function ContactManagement() {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [walletAddress]);
 
-  const fetchGroups = async () => {
+  const fetchGroups = useCallback(async () => {
+    if (!walletAddress) return;
+    
     try {
       const response = await AgentKyroApiClient.contacts.getContactGroups(walletAddress);
       if (response.success && response.data) {
@@ -59,43 +59,54 @@ export default function ContactManagement() {
     } catch (err) {
       console.error("Failed to fetch groups:", err);
     }
-  };
+  }, [walletAddress]);
+
+  useEffect(() => {
+    if (walletAddress) {
+      fetchContacts();
+      fetchGroups();
+    }
+  }, [walletAddress, fetchContacts, fetchGroups]);
 
   const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
+    setModalError(null); // Clear any previous modal errors
     try {
       const response = await AgentKyroApiClient.contacts.addContact(walletAddress, formData);
       
       if (response.success) {
         setShowAddModal(false);
-        setFormData({ name: "", address: "", group: "", verified: false });
+        setFormData({ name: "", address: "", group: "" });
+        setModalError(null);
         fetchContacts();
         fetchGroups();
       } else {
-        setError(response.error || "Failed to add contact");
+        setModalError(response.error || "Failed to add contact");
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setModalError("An unexpected error occurred");
     }
   };
 
   const handleUpdateContact = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingContact) return;
+    setModalError(null); // Clear any previous modal errors
 
     try {
       const response = await AgentKyroApiClient.contacts.updateContact(walletAddress, editingContact.id, formData);
       
       if (response.success) {
         setEditingContact(null);
-        setFormData({ name: "", address: "", group: "", verified: false });
+        setFormData({ name: "", address: "", group: "" });
+        setModalError(null);
         fetchContacts();
         fetchGroups();
       } else {
-        setError(response.error || "Failed to update contact");
+        setModalError(response.error || "Failed to update contact");
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setModalError("An unexpected error occurred");
     }
   };
 
@@ -115,30 +126,14 @@ export default function ContactManagement() {
     }
   };
 
-  const handleVerifyContact = async (contact: Contact) => {
-    try {
-      const response = await AgentKyroApiClient.contacts.verifyContact(walletAddress, contact.address);
-      
-      if (response.success && response.data) {
-        // Update the contact with verification status
-        const updatedContact = { ...contact, verified: response.data.verified };
-        await AgentKyroApiClient.contacts.updateContact(walletAddress, contact.id, updatedContact);
-        fetchContacts();
-      } else {
-        setError(response.error || "Failed to verify contact");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred");
-    }
-  };
 
   const openEditModal = (contact: Contact) => {
     setEditingContact(contact);
+    setModalError(null); // Clear any previous modal errors
     setFormData({
       name: contact.name,
       address: contact.address,
       group: contact.group || "",
-      verified: contact.verified || false,
     });
   };
 
@@ -168,16 +163,19 @@ export default function ContactManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
             Contact Management
           </h2>
-          <p className="text-slate-400 mt-1">Manage your address book and contact groups</p>
+          <p className="text-slate-400 mt-1 text-sm md:text-base">Manage your address book and contact groups</p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 rounded-xl text-white transition-all duration-300"
+          onClick={() => {
+            setShowAddModal(true);
+            setModalError(null);
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 rounded-xl text-white transition-all duration-300 w-full sm:w-auto"
         >
           <FaPlus className="text-sm" />
           Add Contact
@@ -185,7 +183,7 @@ export default function ContactManagement() {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
           <input
@@ -199,7 +197,8 @@ export default function ContactManagement() {
         <select
           value={selectedGroup}
           onChange={(e) => setSelectedGroup(e.target.value)}
-          className="px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
+          className="px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300 w-full sm:w-auto"
+          title="Filter by group"
         >
           <option value="all">All Groups</option>
           {groups.map((group) => (
@@ -216,7 +215,7 @@ export default function ContactManagement() {
       )}
 
       {/* Contacts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {filteredContacts.map((contact) => (
           <div key={contact.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
@@ -237,12 +236,14 @@ export default function ContactManagement() {
                 <button
                   onClick={() => openEditModal(contact)}
                   className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-lg transition-all duration-300"
+                  title="Edit contact"
                 >
                   <FaEdit className="text-slate-400 hover:text-white text-sm" />
                 </button>
                 <button
                   onClick={() => handleDeleteContact(contact.id)}
                   className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/30 rounded-lg transition-all duration-300"
+                  title="Delete contact"
                 >
                   <FaTrash className="text-red-400 hover:text-red-300 text-sm" />
                 </button>
@@ -267,20 +268,10 @@ export default function ContactManagement() {
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 text-sm">Status</span>
                 <div className="flex items-center gap-2">
-                  {contact.verified ? (
-                    <span className="flex items-center gap-1 px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full">
-                      <FaCheck className="text-xs" />
-                      Verified
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => handleVerifyContact(contact)}
-                      className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 text-xs rounded-full transition-colors duration-300"
-                    >
-                      <FaShieldAlt className="text-xs" />
-                      Verify
-                    </button>
-                  )}
+                  <span className="flex items-center gap-1 px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full">
+                    <FaCheck className="text-xs" />
+                    Verified
+                  </span>
                 </div>
               </div>
             </div>
@@ -300,7 +291,10 @@ export default function ContactManagement() {
             }
           </p>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setShowAddModal(true);
+              setModalError(null);
+            }}
             className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 rounded-xl text-white transition-all duration-300"
           >
             Add Your First Contact
@@ -352,18 +346,12 @@ export default function ContactManagement() {
                 />
               </div>
 
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="verified"
-                  checked={formData.verified}
-                  onChange={(e) => setFormData({ ...formData, verified: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 bg-white/5 border-white/10 rounded focus:ring-blue-500 focus:ring-2"
-                />
-                <label htmlFor="verified" className="text-slate-400 text-sm">
-                  Mark as verified
-                </label>
-              </div>
+              {/* Modal Error Message */}
+              {modalError && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-red-400 text-sm">
+                  {modalError}
+                </div>
+              )}
 
               <div className="flex gap-3 pt-4">
                 <button
@@ -377,7 +365,8 @@ export default function ContactManagement() {
                   onClick={() => {
                     setShowAddModal(false);
                     setEditingContact(null);
-                    setFormData({ name: "", address: "", group: "", verified: false });
+                    setFormData({ name: "", address: "", group: "" });
+                    setModalError(null);
                   }}
                   className="px-4 py-3 bg-slate-800/20 hover:bg-slate-700/40 border border-slate-600/30 hover:border-slate-500/50 rounded-xl text-slate-300 hover:text-white transition-all duration-300"
                 >

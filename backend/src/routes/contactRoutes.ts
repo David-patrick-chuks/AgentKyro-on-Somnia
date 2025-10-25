@@ -1,10 +1,10 @@
 import { Router } from 'express';
+import { extractWalletAddress, validateObjectId, validateRequiredFields } from '../middleware/authMiddleware';
 import { asyncHandler } from '../middleware/errorMiddleware';
-import { extractWalletAddress, validateRequiredFields, validateObjectId } from '../middleware/authMiddleware';
 import { Contact } from '../models/Contact';
 import { Transaction } from '../models/Transaction';
-import { ApiResponse, PaginatedResponse } from '../types';
-import { validateWalletAddress, formatWalletAddress } from '../utils/helpers';
+import { ApiResponse } from '../types';
+import { formatWalletAddress, validateWalletAddress } from '../utils/helpers';
 
 const router = Router();
 
@@ -23,9 +23,15 @@ router.get('/',
 
     const contacts = await Contact.find(query).sort({ createdAt: -1 });
 
+    // Transform _id to id for frontend compatibility
+    const transformedContacts = contacts.map(contact => ({
+      ...contact.toObject(),
+      id: contact._id.toString()
+    }));
+
     const response: ApiResponse = {
       success: true,
-      data: contacts
+      data: transformedContacts
     };
 
     res.status(200).json(response);
@@ -67,15 +73,21 @@ router.post('/',
       name: name.trim(),
       address: formatWalletAddress(address),
       group: group || 'default',
-      verified: verified || false,
+      verified: true, // Always set to true
       reputation: {}
     });
 
     await contact.save();
 
+    // Transform _id to id for frontend compatibility
+    const transformedContact = {
+      ...contact.toObject(),
+      id: contact._id.toString()
+    };
+
     const response: ApiResponse = {
       success: true,
-      data: contact,
+      data: transformedContact,
       message: 'Contact added successfully'
     };
 
@@ -133,13 +145,20 @@ router.put('/:id',
     if (name !== undefined) contact.name = name.trim();
     if (address !== undefined) contact.address = formatWalletAddress(address);
     if (group !== undefined) contact.group = group;
-    if (verified !== undefined) contact.verified = verified;
+    // Always keep verified as true
+    contact.verified = true;
 
     await contact.save();
 
+    // Transform _id to id for frontend compatibility
+    const transformedContact = {
+      ...contact.toObject(),
+      id: contact._id.toString()
+    };
+
     const response: ApiResponse = {
       success: true,
-      data: contact,
+      data: transformedContact,
       message: 'Contact updated successfully'
     };
 

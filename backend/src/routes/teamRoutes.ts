@@ -35,52 +35,60 @@ router.get('/',
 // Description: Create a new team workspace
 router.post('/',
   extractWalletAddress,
-  validateRequiredFields(['name', 'members']),
+  validateRequiredFields(['name']),
   asyncHandler(async (req: any, res: any) => {
     const userWalletAddress = req.walletAddress;
-    const { name, description, members } = req.body;
+    const { name, description, members = [] } = req.body;
 
-    // Validate members array
-    if (!Array.isArray(members) || members.length === 0) {
+    // Validate members array if provided
+    if (members && !Array.isArray(members)) {
       return res.status(400).json({
         success: false,
-        error: 'Members array is required and must not be empty'
+        error: 'Members must be an array'
       });
     }
 
-    // Validate each member
-    for (const member of members) {
-      if (!member.walletAddress || !member.name) {
+    // Validate each member if provided
+    if (members.length > 0) {
+      for (const member of members) {
+        if (!member.walletAddress || !member.name) {
+          return res.status(400).json({
+            success: false,
+            error: 'Each member must have walletAddress and name'
+          });
+        }
+
+        if (!validateWalletAddress(member.walletAddress)) {
+          return res.status(400).json({
+            success: false,
+            error: `Invalid wallet address: ${member.walletAddress}`
+          });
+        }
+      }
+
+      // Check for duplicate members
+      const uniqueAddresses = new Set(members.map((m: any) => m.walletAddress.toLowerCase()));
+      if (uniqueAddresses.size !== members.length) {
         return res.status(400).json({
           success: false,
-          error: 'Each member must have walletAddress and name'
+          error: 'Duplicate members not allowed'
         });
       }
 
-      if (!validateWalletAddress(member.walletAddress)) {
-        return res.status(400).json({
-          success: false,
-          error: `Invalid wallet address: ${member.walletAddress}`
+      // Check if owner is in members list
+      const ownerInMembers = members.some((m: any) => 
+        m.walletAddress.toLowerCase() === userWalletAddress
+      );
+
+      if (!ownerInMembers) {
+        members.unshift({
+          walletAddress: userWalletAddress,
+          name: 'Team Owner'
         });
       }
-    }
-
-    // Check for duplicate members
-    const uniqueAddresses = new Set(members.map((m: any) => m.walletAddress.toLowerCase()));
-    if (uniqueAddresses.size !== members.length) {
-      return res.status(400).json({
-        success: false,
-        error: 'Duplicate members not allowed'
-      });
-    }
-
-    // Check if owner is in members list
-    const ownerInMembers = members.some((m: any) => 
-      m.walletAddress.toLowerCase() === userWalletAddress
-    );
-
-    if (!ownerInMembers) {
-      members.unshift({
+    } else {
+      // If no members provided, add owner as the only member
+      members.push({
         walletAddress: userWalletAddress,
         name: 'Team Owner'
       });

@@ -11,7 +11,7 @@ export class TeamApiClient extends BaseApiClient {
     data: { 
       name: string; 
       description?: string; 
-      members: Array<{ walletAddress: string; name: string }> 
+      members?: Array<{ walletAddress: string; name: string }> 
     }
   ): Promise<ApiResponse<Team>> {
     return this.post<Team>('/teams', walletAddress, data);

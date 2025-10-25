@@ -1,7 +1,7 @@
 "use client";
 import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaClock, FaEdit, FaPause, FaPlay, FaPlus, FaTrash } from "react-icons/fa";
 
 interface ScheduledTransaction {
@@ -26,6 +26,7 @@ export default function AdvancedTransactions() {
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<ScheduledTransaction | null>(null);
+  const isFetchingRef = useRef(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -41,13 +42,10 @@ export default function AdvancedTransactions() {
 
   const walletAddress = user?.wallet?.address || "";
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchTransactions();
-    }
-  }, [walletAddress]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
+    if (isFetchingRef.current || !walletAddress) return;
+    
+    isFetchingRef.current = true;
     try {
       setLoading(true);
       setError(null);
@@ -62,8 +60,15 @@ export default function AdvancedTransactions() {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [walletAddress]);
+
+  useEffect(() => {
+    if (walletAddress) {
+      fetchTransactions();
+    }
+  }, [walletAddress, fetchTransactions]);
 
   const handleCreateTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,7 +204,7 @@ export default function AdvancedTransactions() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
             Advanced Transactions
           </h2>
           <p className="text-slate-400 mt-1">Schedule payments and create conditional transactions</p>
@@ -242,12 +247,14 @@ export default function AdvancedTransactions() {
                 <button
                   onClick={() => openEditModal(transaction)}
                   className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-lg transition-all duration-300"
+                  title="Edit transaction"
                 >
                   <FaEdit className="text-slate-400 hover:text-white text-sm" />
                 </button>
                 <button
                   onClick={() => handleDeleteTransaction(transaction.id)}
                   className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/30 rounded-lg transition-all duration-300"
+                  title="Delete transaction"
                 >
                   <FaTrash className="text-red-400 hover:text-red-300 text-sm" />
                 </button>
@@ -332,6 +339,7 @@ export default function AdvancedTransactions() {
                       onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                       className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-white/30 transition-all duration-300"
                       placeholder="Enter amount"
+                      title="Transaction amount"
                       required
                     />
                   </div>
@@ -342,6 +350,7 @@ export default function AdvancedTransactions() {
                       value={formData.token}
                       onChange={(e) => setFormData({ ...formData, token: e.target.value })}
                       className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
+                      title="Select token"
                     >
                       <option value="STT">STT</option>
                       <option value="ETH">ETH</option>
@@ -370,6 +379,7 @@ export default function AdvancedTransactions() {
                   value={formData.scheduledFor}
                   onChange={(e) => setFormData({ ...formData, scheduledFor: e.target.value })}
                   className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
+                  title="Schedule date and time"
                   required
                 />
               </div>
@@ -377,14 +387,15 @@ export default function AdvancedTransactions() {
               <div>
                 <label className="block text-slate-400 text-sm mb-2">Recurring (Optional)</label>
                 <div className="space-y-2">
-                  <select
-                    value={formData.recurring.frequency}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      recurring: { ...formData.recurring, frequency: e.target.value }
-                    })}
-                    className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
-                  >
+                    <select
+                      value={formData.recurring.frequency}
+                      onChange={(e) => setFormData({ 
+                        ...formData, 
+                        recurring: { ...formData.recurring, frequency: e.target.value }
+                      })}
+                      className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
+                      title="Select frequency"
+                    >
                     <option value="">No Recurring</option>
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>

@@ -1,7 +1,7 @@
 "use client";
 import { AgentKyroApiClient, AnalyticsData } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaArrowDown, FaArrowUp, FaChartLine, FaChartPie, FaExchangeAlt, FaWallet } from "react-icons/fa";
 
 export default function AnalyticsDashboard() {
@@ -10,16 +10,14 @@ export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d" | "1y">("30d");
+  const isFetchingRef = useRef(false);
 
   const walletAddress = user?.wallet?.address || "";
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchAnalytics();
-    }
-  }, [walletAddress, selectedPeriod]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
+    if (isFetchingRef.current || !walletAddress) return;
+    
+    isFetchingRef.current = true;
     try {
       setLoading(true);
       setError(null);
@@ -30,17 +28,24 @@ export default function AnalyticsDashboard() {
       } else {
         setError(response.error || "Failed to fetch analytics");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [walletAddress, selectedPeriod]);
+
+  useEffect(() => {
+    if (walletAddress) {
+      fetchAnalytics();
+    }
+  }, [walletAddress, fetchAnalytics]);
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-pulse">
               <div className="h-4 bg-slate-700 rounded w-1/2 mb-2"></div>
@@ -100,11 +105,11 @@ export default function AnalyticsDashboard() {
   return (
     <div className="space-y-6">
       {/* Period Selector */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
           Analytics Dashboard
         </h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {(["7d", "30d", "90d", "1y"] as const).map((period) => (
             <button
               key={period}
@@ -122,7 +127,7 @@ export default function AnalyticsDashboard() {
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <div className="p-3 bg-blue-500/20 rounded-xl">

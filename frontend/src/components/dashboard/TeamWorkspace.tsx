@@ -1,7 +1,7 @@
 "use client";
 import { AgentKyroApiClient, Team } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaEdit, FaPlus, FaTimes, FaTrash, FaUserPlus, FaUsers } from "react-icons/fa";
 
 export default function TeamWorkspace() {
@@ -11,6 +11,7 @@ export default function TeamWorkspace() {
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+  const isFetchingRef = useRef(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -21,13 +22,10 @@ export default function TeamWorkspace() {
 
   const walletAddress = user?.wallet?.address || "";
 
-  useEffect(() => {
-    if (walletAddress) {
-      fetchTeams();
-    }
-  }, [walletAddress]);
-
-  const fetchTeams = async () => {
+  const fetchTeams = useCallback(async () => {
+    if (isFetchingRef.current || !walletAddress) return;
+    
+    isFetchingRef.current = true;
     try {
       setLoading(true);
       setError(null);
@@ -42,8 +40,15 @@ export default function TeamWorkspace() {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
-  };
+  }, [walletAddress]);
+
+  useEffect(() => {
+    if (walletAddress) {
+      fetchTeams();
+    }
+  }, [walletAddress, fetchTeams]);
 
   const handleCreateTeam = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,20 +112,25 @@ export default function TeamWorkspace() {
   };
 
   const addMember = () => {
-    const address = prompt("Enter wallet address:");
-    const name = prompt("Enter member name:");
-    if (address && name && !formData.members.some(m => m.walletAddress === address)) {
-      setFormData({
-        ...formData,
-        members: [...formData.members, { walletAddress: address, name }],
-      });
-    }
-  };
-
-  const removeMember = (address: string) => {
     setFormData({
       ...formData,
-      members: formData.members.filter(m => m.walletAddress !== address),
+      members: [...formData.members, { walletAddress: "", name: "" }],
+    });
+  };
+
+  const removeMember = (index: number) => {
+    setFormData({
+      ...formData,
+      members: formData.members.filter((_, i) => i !== index),
+    });
+  };
+
+  const updateMember = (index: number, field: 'name' | 'walletAddress', value: string) => {
+    const updatedMembers = [...formData.members];
+    updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+    setFormData({
+      ...formData,
+      members: updatedMembers,
     });
   };
 
@@ -143,16 +153,16 @@ export default function TeamWorkspace() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
             Team & Workspace
           </h2>
-          <p className="text-slate-400 mt-1">Create teams and manage group transactions</p>
+          <p className="text-slate-400 mt-1 text-sm md:text-base">Create teams and manage group transactions</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 rounded-xl text-white transition-all duration-300"
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 rounded-xl text-white transition-all duration-300 w-full sm:w-auto"
         >
           <FaPlus className="text-sm" />
           Create Team
@@ -167,7 +177,7 @@ export default function TeamWorkspace() {
       )}
 
       {/* Teams Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {teams.map((team) => (
           <div key={team.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
@@ -186,12 +196,14 @@ export default function TeamWorkspace() {
                 <button
                   onClick={() => openEditModal(team)}
                   className="p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-lg transition-all duration-300"
+                  title="Edit team"
                 >
                   <FaEdit className="text-slate-400 hover:text-white text-sm" />
                 </button>
                 <button
                   onClick={() => handleDeleteTeam(team.id)}
                   className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/30 rounded-lg transition-all duration-300"
+                  title="Delete team"
                 >
                   <FaTrash className="text-red-400 hover:text-red-300 text-sm" />
                 </button>
@@ -287,30 +299,50 @@ export default function TeamWorkspace() {
 
               <div>
                 <label className="block text-slate-400 text-sm mb-2">Team Members</label>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {formData.members.map((member, index) => (
-                    <div key={index} className="flex items-center gap-2 p-2 bg-slate-800/30 rounded-lg">
-                      <div className="flex-1">
-                        <div className="text-white text-sm font-medium">{member.name}</div>
-                        <div className="text-slate-400 text-xs">{member.walletAddress}</div>
+                    <div key={index} className="p-3 bg-slate-800/30 rounded-lg border border-white/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex-1">
+                          <input
+                            type="text"
+                            value={member.name}
+                            onChange={(e) => updateMember(index, 'name', e.target.value)}
+                            className="w-full px-3 py-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-white/30 transition-all duration-300 text-sm"
+                            placeholder="Member name"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeMember(index)}
+                          className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300"
+                          title="Remove member"
+                        >
+                          <FaTimes className="text-sm" />
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => removeMember(member.walletAddress)}
-                        className="p-1 text-red-400 hover:text-red-300"
-                      >
-                        <FaTimes className="text-sm" />
-                      </button>
+                      <input
+                        type="text"
+                        value={member.walletAddress}
+                        onChange={(e) => updateMember(index, 'walletAddress', e.target.value)}
+                        className="w-full px-3 py-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-white/30 transition-all duration-300 text-sm"
+                        placeholder="Wallet address (0x...)"
+                      />
                     </div>
                   ))}
                   <button
                     type="button"
                     onClick={addMember}
-                    className="w-full flex items-center justify-center gap-2 p-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-lg text-white transition-all duration-300"
+                    className="w-full flex items-center justify-center gap-2 p-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-lg text-white transition-all duration-300"
                   >
                     <FaUserPlus className="text-sm" />
                     Add Member
                   </button>
+                  {formData.members.length === 0 && (
+                    <div className="text-center py-4 text-slate-400 text-sm">
+                      No members added yet. You can add members now or later.
+                    </div>
+                  )}
                 </div>
               </div>
 
