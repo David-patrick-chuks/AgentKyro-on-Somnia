@@ -1,1 +1,1 @@
-Remove deprecated Settings.tsx component
+Enhance TeamWorkspace.tsx with team transaction history
