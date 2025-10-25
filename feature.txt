@@ -1,1 +1,1 @@
-Integrate WebXR for VR dashboard in dashboard/page.tsx
+Add notification filtering in NotificationManagement.tsx
