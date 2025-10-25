@@ -1,1 +1,1 @@
-Update sharingRoutes.ts to generate AR-compatible QR codes
+Enhance contactRoutes.ts with pagination for contact queries
