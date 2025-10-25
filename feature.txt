@@ -1,1 +1,1 @@
-Update dashboard/page.tsx for AR portfolio visualization
+Refactor DashboardSidebar.tsx for dynamic navigation links
