@@ -1,1 +1,1 @@
-Fix DashboardSidebar.tsx styling for mobile responsiveness
+Update AdvancedTransactions.tsx with conditional payment UI
