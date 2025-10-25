@@ -1,1 +1,1 @@
-Add AR QR code scanning in ChatInterface.tsx for transactions
+Optimize contactRoutes.ts for faster contact verification
