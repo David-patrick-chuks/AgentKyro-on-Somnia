@@ -1,1 +1,1 @@
-Optimize contactRoutes.ts for faster contact verification
+Add approval status display to TeamWorkspace.tsx
