@@ -1,1 +1,1 @@
-Add approval status display to TeamWorkspace.tsx
+Integrate WebXR for VR dashboard in dashboard/page.tsx
