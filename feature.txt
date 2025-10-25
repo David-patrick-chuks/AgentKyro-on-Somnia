@@ -1,1 +1,1 @@
-Add AR-based transaction controls to AdvancedTransactions.tsx
+Optimize AnalyticsDashboard.tsx for real-time data updates
