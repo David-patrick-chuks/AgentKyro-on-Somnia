@@ -1,1 +1,1 @@
-Add notification filtering in NotificationManagement.tsx
+Fix DashboardSidebar.tsx styling for mobile responsiveness
