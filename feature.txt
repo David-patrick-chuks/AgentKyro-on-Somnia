@@ -1,1 +1,1 @@
-Implement NotificationManagement.tsx for notification controls
+Update teamApi.ts with error handling for team API calls
