@@ -35,10 +35,7 @@
     "multer": "^2.0.2",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.10",
-    "pdfkit": "^0.17.2",
-    "qrcode": "^1.5.4"
-  },
-  "devDependencies": {
+    "pdfkit": "^0.17.2",    
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
@@ -50,6 +47,10 @@
     "@types/pdfkit": "^0.17.3",
     "@types/qrcode": "^1.5.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+
   }
 }
