@@ -1,1 +1,1 @@
-Refactor DashboardSidebar.tsx for dynamic navigation links
+Add AR-based transaction controls to AdvancedTransactions.tsx
