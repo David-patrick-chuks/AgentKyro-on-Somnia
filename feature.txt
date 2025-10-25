@@ -1,1 +1,1 @@
-Add team member invitation endpoint to teamRoutes.ts
+Update dashboard/page.tsx for AR portfolio visualization
