@@ -1,1 +1,1 @@
-Update teamApi.ts with error handling for team API calls
+Add AR QR code scanning in ChatInterface.tsx for transactions
