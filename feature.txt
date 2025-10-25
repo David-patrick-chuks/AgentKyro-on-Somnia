@@ -1,1 +1,1 @@
-Optimize AnalyticsDashboard.tsx for real-time data updates
+Improve ContactManagement.tsx with contact group filtering
