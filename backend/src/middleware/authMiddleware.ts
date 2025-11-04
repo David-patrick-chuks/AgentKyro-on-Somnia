@@ -26,21 +26,34 @@ export const extractWalletAddress = (req: AuthenticatedRequest, res: Response, n
   next();
 };
 
-// Middleware to validate required fields
+// src/middleware/authMiddleware.ts
+
 export const validateRequiredFields = (fields: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const missingFields: string[] = [];
-
-    fields.forEach(field => {
-      if (!req.body[field]) {
-        missingFields.push(field);
-      }
-    });
-
-    if (missingFields.length > 0) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    // Ensure body exists
+    if (!req.body || typeof req.body !== "object") {
       res.status(400).json({
         success: false,
-        error: `Missing required fields: ${missingFields.join(', ')}`
+        error: "Invalid request body",
+      });
+      return; // Exit early
+    }
+
+    const missing: string[] = [];
+    for (const field of fields) {
+      if (
+        req.body[field] === undefined ||
+        req.body[field] === null ||
+        req.body[field] === ""
+      ) {
+        missing.push(field);
+      }
+    }
+
+    if (missing.length > 0) {
+      res.status(400).json({
+        success: false,
+        error: `Missing required fields: ${missing.join(", ")}`,
       });
       return;
     }
@@ -48,7 +61,6 @@ export const validateRequiredFields = (fields: string[]) => {
     next();
   };
 };
-
 // Middleware to validate MongoDB ObjectId
 export const validateObjectId = (paramName: string = 'id') => {
   return (req: Request, res: Response, next: NextFunction): void => {

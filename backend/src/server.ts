@@ -4,12 +4,13 @@ import dotenv from 'dotenv';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
-import morgan from 'morgan';
+import { requestLogger } from "./middleware/logger";
 import { connectDB } from './config/database';
 import { errorHandler, notFound } from './middleware/errorMiddleware';
 
 // Import routes
 import analyticsRoutes from './routes/analyticsRoutes';
+import chatRoutes from './routes/chatRoutes';
 import contactRoutes from './routes/contactRoutes';
 import healthRoutes from './routes/healthRoutes';
 import notificationRoutes from './routes/notificationRoutes';
@@ -43,20 +44,14 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Body parsing middleware
+// CRITICAL: Parse JSON bodies
 app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
+app.use(express.urlencoded({ extended: true }));
 // Compression middleware
 app.use(compression());
 
 // Logging middleware
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-} else {
-  app.use(morgan('combined'));
-}
-
+app.use(requestLogger());
 // Health check endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -76,6 +71,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/sharing', sharingRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/chat', chatRoutes);
 app.use('/api/health', healthRoutes);
 
 // Error handling middleware

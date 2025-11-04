@@ -1,4 +1,5 @@
 "use client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentKyroApiClient, Contact } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -194,17 +195,17 @@ export default function ContactManagement() {
             className="w-full pl-10 pr-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-white/30 transition-all duration-300"
           />
         </div>
-        <select
-          value={selectedGroup}
-          onChange={(e) => setSelectedGroup(e.target.value)}
-          className="px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300 w-full sm:w-auto"
-          title="Filter by group"
-        >
-          <option value="all">All Groups</option>
-          {groups.map((group) => (
-            <option key={group} value={group}>{group}</option>
-          ))}
-        </select>
+        <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+          <SelectTrigger className="px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:border-white/30 transition-all duration-300 w-full sm:w-auto">
+            <SelectValue placeholder="All Groups" />
+          </SelectTrigger>
+          <SelectContent className="bg-slate-800 border-white/10">
+            <SelectItem value="all">All Groups</SelectItem>
+            {groups.map((group) => (
+              <SelectItem key={group} value={group}>{group}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Error Message */}
@@ -226,7 +227,7 @@ export default function ContactManagement() {
                   </span>
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold">{contact.name}</h3>
+                  <h3 className="text-white capitalize font-semibold">{contact.name}</h3>
                   <p className="text-slate-400 text-sm">
                     {contact.address.slice(0, 6)}...{contact.address.slice(-4)}
                   </p>
@@ -253,7 +254,11 @@ export default function ContactManagement() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-slate-400 text-sm">Address</span>
-                <span className="text-white text-sm font-mono">{contact.address}</span>
+                <span className="text-white text-sm font-mono">
+                  {/* {contact.address} */}
+
+                  {contact.address.slice(0, 6)}...{contact.address.slice(-4)}
+                </span>
               </div>
               
               {contact.group && (

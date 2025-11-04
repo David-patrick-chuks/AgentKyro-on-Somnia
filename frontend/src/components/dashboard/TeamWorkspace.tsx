@@ -72,7 +72,7 @@ export default function TeamWorkspace() {
     if (!editingTeam) return;
 
     try {
-      const response = await AgentKyroApiClient.teams.updateTeam(walletAddress, editingTeam.id, formData);
+      const response = await AgentKyroApiClient.teams.updateTeam(walletAddress, editingTeam._id, formData);
       
       if (response.success) {
         setEditingTeam(null);
@@ -179,7 +179,7 @@ export default function TeamWorkspace() {
       {/* Teams Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {teams.map((team) => (
-          <div key={team.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
+          <div key={team._id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
@@ -201,7 +201,7 @@ export default function TeamWorkspace() {
                   <FaEdit className="text-slate-400 hover:text-white text-sm" />
                 </button>
                 <button
-                  onClick={() => handleDeleteTeam(team.id)}
+                  onClick={() => handleDeleteTeam(team._id)}
                   className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/30 rounded-lg transition-all duration-300"
                   title="Delete team"
                 >

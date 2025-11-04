@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -42,6 +43,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
+    "react-markdown": "^10.1.0",
     "react-type-animation": "^3.2.0",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1"

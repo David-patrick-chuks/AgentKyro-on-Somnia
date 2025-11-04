@@ -1,4 +1,5 @@
 "use client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState } from "react";
@@ -209,15 +210,16 @@ export default function SecurityRisk() {
                 
                 <div>
                   <label className="block text-slate-400 text-sm mb-2">Token</label>
-                  <select
-                    value={riskForm.token}
-                    onChange={(e) => setRiskForm({ ...riskForm, token: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-800/30 border border-slate-600/30 rounded-xl text-white focus:border-blue-400 focus:outline-none transition-colors"
-                  >
-                    <option value="STT">STT</option>
-                    <option value="ETH">ETH</option>
-                    <option value="BTC">BTC</option>
-                  </select>
+                  <Select value={riskForm.token} onValueChange={(value) => setRiskForm({ ...riskForm, token: value })}>
+                    <SelectTrigger className="w-full px-4 py-3 bg-slate-800/30 border border-slate-600/30 rounded-xl text-white focus:border-blue-400 transition-colors">
+                      <SelectValue placeholder="Select token" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-white/10">
+                      <SelectItem value="STT">STT</SelectItem>
+                      <SelectItem value="ETH">ETH</SelectItem>
+                      <SelectItem value="BTC">BTC</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               
@@ -533,15 +535,16 @@ export default function SecurityRisk() {
                 
                 <div>
                   <label className="block text-slate-400 text-sm mb-2">Token</label>
-                  <select
-                    value={validationForm.token}
-                    onChange={(e) => setValidationForm({ ...validationForm, token: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-800/30 border border-slate-600/30 rounded-xl text-white focus:border-blue-400 focus:outline-none transition-colors"
-                  >
-                    <option value="STT">STT</option>
-                    <option value="ETH">ETH</option>
-                    <option value="BTC">BTC</option>
-                  </select>
+                  <Select value={validationForm.token} onValueChange={(value) => setValidationForm({ ...validationForm, token: value })}>
+                    <SelectTrigger className="w-full px-4 py-3 bg-slate-800/30 border border-slate-600/30 rounded-xl text-white focus:border-blue-400 transition-colors">
+                      <SelectValue placeholder="Select token" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-800 border-white/10">
+                      <SelectItem value="STT">STT</SelectItem>
+                      <SelectItem value="ETH">ETH</SelectItem>
+                      <SelectItem value="BTC">BTC</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               

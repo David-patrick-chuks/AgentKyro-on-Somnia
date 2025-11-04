@@ -1,4 +1,5 @@
 "use client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState } from "react";
@@ -494,15 +495,16 @@ export default function SharingIntegration() {
               
               <div>
                 <label className="block text-slate-400 text-sm mb-2">Template</label>
-                <select
-                  value={emailForm.template}
-                  onChange={(e) => setEmailForm({ ...emailForm, template: e.target.value as any })}
-                  className="w-full px-4 py-3 bg-slate-800/30 border border-slate-600/30 rounded-xl text-white focus:border-green-400 focus:outline-none transition-colors"
-                >
-                  <option value="receipt">Transaction Receipt</option>
-                  <option value="notification">Transaction Notification</option>
-                  <option value="custom">Custom Email</option>
-                </select>
+                <Select value={emailForm.template} onValueChange={(value) => setEmailForm({ ...emailForm, template: value as any })}>
+                  <SelectTrigger className="w-full px-4 py-3 bg-slate-800/30 border border-slate-600/30 rounded-xl text-white focus:border-green-400 transition-colors">
+                    <SelectValue placeholder="Select template" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-white/10">
+                    <SelectItem value="receipt">Transaction Receipt</SelectItem>
+                    <SelectItem value="notification">Transaction Notification</SelectItem>
+                    <SelectItem value="custom">Custom Email</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               {emailForm.template !== 'custom' && (

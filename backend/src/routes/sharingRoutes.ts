@@ -19,11 +19,30 @@ router.post('/generate-qr',
     const userWalletAddress = req.walletAddress;
     const { transactionId } = req.body;
 
-    // Find the transaction
-    const transaction = await Transaction.findOne({
-      _id: transactionId,
-      walletAddress: userWalletAddress
-    });
+    // Find the transaction - handle both ObjectId and wallet address
+    let transaction;
+    if (transactionId.match(/^[0-9a-fA-F]{24}$/)) {
+      // It's a valid ObjectId
+      transaction = await Transaction.findOne({
+        _id: transactionId,
+        walletAddress: userWalletAddress
+      });
+    } else if (transactionId.match(/^0x[a-fA-F0-9]{40}$/)) {
+      // It's a wallet address, find by txHash or recipient
+      transaction = await Transaction.findOne({
+        $or: [
+          { txHash: transactionId },
+          { from: transactionId.toLowerCase() },
+          { to: transactionId.toLowerCase() }
+        ],
+        walletAddress: userWalletAddress
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid transaction ID format'
+      });
+    }
 
     if (!transaction) {
       return res.status(404).json({
@@ -84,11 +103,30 @@ router.post('/generate-receipt',
       });
     }
 
-    // Find the transaction
-    const transaction = await Transaction.findOne({
-      _id: transactionId,
-      walletAddress: userWalletAddress
-    });
+    // Find the transaction - handle both ObjectId and wallet address
+    let transaction;
+    if (transactionId.match(/^[0-9a-fA-F]{24}$/)) {
+      // It's a valid ObjectId
+      transaction = await Transaction.findOne({
+        _id: transactionId,
+        walletAddress: userWalletAddress
+      });
+    } else if (transactionId.match(/^0x[a-fA-F0-9]{40}$/)) {
+      // It's a wallet address, find by txHash or recipient
+      transaction = await Transaction.findOne({
+        $or: [
+          { txHash: transactionId },
+          { from: transactionId.toLowerCase() },
+          { to: transactionId.toLowerCase() }
+        ],
+        walletAddress: userWalletAddress
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid transaction ID format'
+      });
+    }
 
     if (!transaction) {
       return res.status(404).json({

@@ -1,4 +1,5 @@
 "use client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -346,16 +347,16 @@ export default function AdvancedTransactions() {
 
                   <div>
                     <label className="block text-slate-400 text-sm mb-2">Token</label>
-                    <select
-                      value={formData.token}
-                      onChange={(e) => setFormData({ ...formData, token: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
-                      title="Select token"
-                    >
-                      <option value="STT">STT</option>
-                      <option value="ETH">ETH</option>
-                      <option value="BTC">BTC</option>
-                    </select>
+                    <Select value={formData.token} onValueChange={(value) => setFormData({ ...formData, token: value })}>
+                      <SelectTrigger className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:border-white/30 transition-all duration-300">
+                        <SelectValue placeholder="Select token" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-white/10">
+                        <SelectItem value="STT">STT</SelectItem>
+                        <SelectItem value="ETH">ETH</SelectItem>
+                        <SelectItem value="BTC">BTC</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
@@ -387,22 +388,25 @@ export default function AdvancedTransactions() {
               <div>
                 <label className="block text-slate-400 text-sm mb-2">Recurring (Optional)</label>
                 <div className="space-y-2">
-                    <select
-                      value={formData.recurring.frequency}
-                      onChange={(e) => setFormData({ 
+                    <Select 
+                      value={formData.recurring.frequency} 
+                      onValueChange={(value) => setFormData({ 
                         ...formData, 
-                        recurring: { ...formData.recurring, frequency: e.target.value }
+                        recurring: { ...formData.recurring, frequency: value }
                       })}
-                      className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/30 transition-all duration-300"
-                      title="Select frequency"
                     >
-                    <option value="">No Recurring</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
+                      <SelectTrigger className="w-full px-4 py-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl text-white focus:border-white/30 transition-all duration-300">
+                        <SelectValue placeholder="Select frequency" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-white/10">
+                        <SelectItem value="none">No Recurring</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Weekly</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                      </SelectContent>
+                    </Select>
                   
-                  {formData.recurring.frequency && (
+                  {formData.recurring.frequency && formData.recurring.frequency !== "none" && (
                     <input
                       type="date"
                       value={formData.recurring.endDate}

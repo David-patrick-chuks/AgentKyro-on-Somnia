@@ -15,7 +15,6 @@ export async function GET(
       );
     }
 
-    // Forward request to backend
     const response = await backendApi.get(`/security/address-reputation/${params.address}`, {
       headers: {
         'walletAddress': walletAddress

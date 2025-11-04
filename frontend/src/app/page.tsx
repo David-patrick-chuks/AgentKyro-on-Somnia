@@ -112,21 +112,7 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
-                  <div className="text-3xl font-bold text-white mb-2">10K+</div>
-                  <div className="text-slate-400">Active Users</div>
-                </div>
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
-                  <div className="text-3xl font-bold text-white mb-2">$50M+</div>
-                  <div className="text-slate-400">Assets Managed</div>
-                </div>
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
-                  <div className="text-3xl font-bold text-white mb-2">99.9%</div>
-                  <div className="text-slate-400">Uptime</div>
-                </div>
-              </div>
+             
             </div>
           </section>
 

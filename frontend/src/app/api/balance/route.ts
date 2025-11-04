@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
     
     
-
+    
     const tokenAddress = token === "ETH" ? TOKEN_ADDRESSES.ETH : undefined;
     const balance = await blockchain.getBalance(address, tokenAddress);
 

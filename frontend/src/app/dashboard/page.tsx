@@ -9,11 +9,11 @@ import SecurityRisk from "@/components/dashboard/SecurityRisk";
 import SharingIntegration from "@/components/dashboard/SharingIntegration";
 import TeamWorkspace from "@/components/dashboard/TeamWorkspace";
 import TransactionHistory from "@/components/dashboard/TransactionHistory";
-import { usePrivy } from "@privy-io/react-auth";
+import { useLogout, usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaBars, FaBell, FaChartLine, FaClock, FaHistory, FaQrcode, FaRobot, FaShieldAlt, FaTimes, FaUsers } from "react-icons/fa";
+import { FaBars, FaBell, FaChartLine, FaHistory, FaQrcode, FaRobot, FaShieldAlt, FaSignOutAlt, FaTimes, FaUsers, FaWallet } from "react-icons/fa";
 
 type DashboardSection = 
   | "analytics"
@@ -28,6 +28,12 @@ type DashboardSection =
 
 export default function Dashboard() {
   const { authenticated, user } = usePrivy();
+  const { logout } = useLogout({
+    onSuccess: () => {
+      console.log('User successfully logged out');
+      window.location.href = "/";
+    }
+  });
   const router = useRouter();
   const [activeSection, setActiveSection] = useState<DashboardSection>("analytics");
   const [isLoading, setIsLoading] = useState(true);
@@ -111,50 +117,171 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-            <nav className="p-4 space-y-2">
-              {[
-                { id: "analytics", label: "Analytics", icon: <FaChartLine className="text-xl" />, description: "Dashboard & Insights" },
-                { id: "contacts", label: "Contacts", icon: <FaUsers className="text-xl" />, description: "Address Book" },
-                { id: "teams", label: "Teams", icon: <FaUsers className="text-xl" />, description: "Workspace" },
-                { id: "transactions", label: "Transactions", icon: <FaClock className="text-xl" />, description: "Advanced" },
-                { id: "transaction-history", label: "Transaction History", icon: <FaHistory className="text-xl" />, description: "View & Search" },
-                { id: "security", label: "Security", icon: <FaShieldAlt className="text-xl" />, description: "Risk & Safety" },
-                { id: "sharing", label: "Sharing", icon: <FaQrcode className="text-xl" />, description: "Integration" },
-                { id: "chat", label: "Chat", icon: <FaRobot className="text-xl" />, description: "AI Assistant" },
-                { id: "notifications", label: "Notifications", icon: <FaBell className="text-xl" />, description: "Alerts & Subscriptions" }
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveSection(item.id as DashboardSection);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 group ${
-                    activeSection === item.id
-                      ? "bg-white/10 border border-white/20 text-white"
-                      : "text-slate-400 hover:text-white hover:bg-white/5 hover:border-white/10 border border-transparent"
-                  }`}
-                >
-                  <div className={`transition-colors duration-300 ${
-                    activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
-                  }`}>
-                    {item.icon}
-                  </div>
-                  <div className="text-left flex-1">
-                    <div className={`font-medium text-sm ${
-                      activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
-                    }`}>
-                      {item.label}
-                    </div>
-                    <div className={`text-xs ${
-                      activeSection === item.id ? "text-slate-300" : "text-slate-500 group-hover:text-slate-300"
-                    }`}>
-                      {item.description}
-                    </div>
-                  </div>
-                </button>
-              ))}
+            <nav className="p-4 space-y-6">
+              {/* Overview */}
+              <div>
+                <div className="px-3 mb-3">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overview</h3>
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { id: "analytics", label: "Analytics", icon: <FaChartLine className="text-lg" /> },
+                    { id: "chat", label: "AI Chat", icon: <FaRobot className="text-lg" /> }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveSection(item.id as DashboardSection);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                        activeSection === item.id
+                          ? "bg-white/10 text-white"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <div className={`transition-colors duration-200 ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.icon}
+                      </div>
+                      <span className={`font-medium text-sm ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Transactions */}
+              <div>
+                <div className="px-3 mb-3">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Transactions</h3>
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { id: "transactions", label: "Send", icon: <FaWallet className="text-lg" /> },
+                    { id: "transaction-history", label: "History", icon: <FaHistory className="text-lg" /> }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveSection(item.id as DashboardSection);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                        activeSection === item.id
+                          ? "bg-white/10 text-white"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <div className={`transition-colors duration-200 ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.icon}
+                      </div>
+                      <span className={`font-medium text-sm ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Contacts & Teams */}
+              <div>
+                <div className="px-3 mb-3">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Contacts & Teams</h3>
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { id: "contacts", label: "Contacts", icon: <FaUsers className="text-lg" /> },
+                    { id: "teams", label: "Teams", icon: <FaUsers className="text-lg" /> }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveSection(item.id as DashboardSection);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                        activeSection === item.id
+                          ? "bg-white/10 text-white"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <div className={`transition-colors duration-200 ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.icon}
+                      </div>
+                      <span className={`font-medium text-sm ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tools */}
+              <div>
+                <div className="px-3 mb-3">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tools</h3>
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { id: "security", label: "Security", icon: <FaShieldAlt className="text-lg" /> },
+                    { id: "sharing", label: "Sharing", icon: <FaQrcode className="text-lg" /> },
+                    { id: "notifications", label: "Notifications", icon: <FaBell className="text-lg" /> }
+                  ].map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveSection(item.id as DashboardSection);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                        activeSection === item.id
+                          ? "bg-white/10 text-white"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <div className={`transition-colors duration-200 ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.icon}
+                      </div>
+                      <span className={`font-medium text-sm ${
+                        activeSection === item.id ? "text-white" : "text-slate-400 group-hover:text-white"
+                      }`}>
+                        {item.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </nav>
+            
+            {/* Mobile Logout Button */}
+            <div className="absolute bottom-6 left-4 right-4">
+              <button
+                onClick={logout}
+                className="w-full flex items-center gap-3 p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 hover:border-white/10 border border-transparent transition-all duration-300 group"
+              >
+                <FaSignOutAlt className="text-xl" />
+                <div className="text-left flex-1">
+                  <div className="font-medium text-sm text-slate-400 group-hover:text-white">
+                    Logout
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -213,9 +340,9 @@ export default function Dashboard() {
                   className="relative p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl hover:border-white/30 transition-all duration-300"
                   title="Notifications"
                 >
-                  <FaBell className="text-white text-lg" />
+                  <FaBell className="text-white lg:flex hidden text-lg" />
                   {/* Notification count badge */}
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                  <span className="absolute -top-1 -right-1 bg-red-500/10 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
                     0
                   </span>
                 </button>

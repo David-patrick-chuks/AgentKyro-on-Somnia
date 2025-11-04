@@ -30,10 +30,10 @@ export default function TransactionHistory() {
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     recipient: "",
-    token: "",
+    token: "all",
     startDate: "",
     endDate: "",
-    status: ""
+    status: "all"
   });
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<"date" | "amount" | "status">("date");
@@ -58,7 +58,7 @@ export default function TransactionHistory() {
       // Add filters
       if (filters.search) params.search = filters.search;
       if (filters.recipient) params.recipient = filters.recipient;
-      if (filters.token) params.token = filters.token;
+      if (filters.token && filters.token !== "all") params.token = filters.token;
       if (filters.startDate) params.startDate = filters.startDate;
       if (filters.endDate) params.endDate = filters.endDate;
 
@@ -157,10 +157,10 @@ export default function TransactionHistory() {
     setFilters({
       search: "",
       recipient: "",
-      token: "",
+      token: "all",
       startDate: "",
       endDate: "",
-      status: ""
+      status: "all"
     });
     setCurrentPage(1);
   };
@@ -378,8 +378,8 @@ export default function TransactionHistory() {
                 <SelectTrigger className="w-full bg-white/5 border-white/10 text-white focus:border-white/30">
                   <SelectValue placeholder="All Tokens" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-white/10">
-                  <SelectItem value="">All Tokens</SelectItem>
+                <SelectContent className="bg-slate-600 border-white/10">
+                  <SelectItem value="all">All Tokens</SelectItem>
                   <SelectItem value="STT">STT</SelectItem>
                   <SelectItem value="USDC">USDC</SelectItem>
                   <SelectItem value="USDT">USDT</SelectItem>
@@ -416,7 +416,7 @@ export default function TransactionHistory() {
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-800 border-white/10">
-                  <SelectItem value="">All Status</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="confirmed">Confirmed</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="failed">Failed</SelectItem>

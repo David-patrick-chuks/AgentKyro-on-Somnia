@@ -42,8 +42,7 @@ export const anvil: Chain = {
   testnet: true,
 };
 
-export const supportedChains = [somniaTestnet, anvil];
+export const supportedChains = [somniaTestnet];
 
 // Privy App ID
 export const privyAppId = "cmh36ui0r00o8kz0cx6a8tmt1";
-// export const privyAppId = "cmgupofhs02iel10bh531fkvq";

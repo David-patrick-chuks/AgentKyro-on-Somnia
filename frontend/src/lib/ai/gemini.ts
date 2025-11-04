@@ -1,162 +1,282 @@
+// lib/ai/gemini.ts
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ParsedIntent } from "../types";
 
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
-const hasApiKey = !!apiKey;
-const genAI = new GoogleGenerativeAI(apiKey || "dummy");
+// ──────────────────────────────────────────────────────────────
+// CONFIG
+// ──────────────────────────────────────────────────────────────
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 5000;
+const REQUEST_TIMEOUT_MS = 30_000;
 
+// ──────────────────────────────────────────────────────────────
+// Load keys (public env vars)
+// ──────────────────────────────────────────────────────────────
+function getGeminiApiKeys(): string[] {
+  const keys: string[] = [];
+  if (process.env.NEXT_PUBLIC_GEMINI_API_KEY) keys.push(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
+  for (let i = 1; i <= 10; i++) {
+    const k = process.env[`NEXT_PUBLIC_GEMINI_API_KEY_${i}`];
+    if (k) keys.push(k);
+  }
+  console.log(`Loaded ${keys.length} Gemini API key(s)`);
+  return keys;
+}
+
+// ──────────────────────────────────────────────────────────────
+// GeminiParser
+// ──────────────────────────────────────────────────────────────
 export class GeminiParser {
-  private model: ReturnType<typeof genAI.getGenerativeModel> | null = null;
+  private apiKeys: string[];
+  private currentKeyIndex = 0;
+  private model: ReturnType<GoogleGenerativeAI["getGenerativeModel"]> | null = null;
 
   constructor() {
-    if (!hasApiKey) {
-      console.warn('No Gemini API key found in environment variables');
+    this.apiKeys = getGeminiApiKeys();
+    if (this.apiKeys.length === 0) {
+      console.warn("No Gemini keys – regex fallback only");
       return;
     }
+    this.rotateModel();
+    console.info("Gemini model initialized");
+  }
+
+  // ───── rotate key on rate-limit / error ─────
+  private rotateModel() {
+    this.currentKeyIndex = (this.currentKeyIndex + 1) % this.apiKeys.length;
+    const key = this.apiKeys[this.currentKeyIndex];
+    console.log(`Switched to Gemini API key #${this.currentKeyIndex + 1}`);
+
+    const genAI = new GoogleGenerativeAI(key);
+    this.model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.2,
+      },
+    });
+  }
+
+  // ───── timeout wrapper ─────
+  private withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+    return Promise.race([
+      p,
+      new Promise<T>((_, reject) => setTimeout(() => reject(new Error("timeout")), ms)),
+    ]);
+  }
+
+  // ───── retry wrapper ─────
+  private async withRetry<T>(op: () => Promise<T>, attempt = 0): Promise<T> {
     try {
-      this.model = genAI.getGenerativeModel({
-        model: "gemini-robotics-er-1.5-preview",
-      });
-      console.info('Gemini AI model initialized successfully');
-    } catch (error) {
-      console.error('Failed to initialize Gemini AI model:', error);
+      return await this.withTimeout(op(), REQUEST_TIMEOUT_MS);
+    } catch (e: any) {
+      const retryable = attempt < MAX_RETRIES &&
+        ["429", "503", "timeout", "network", "ECONNRESET", "ETIMEDOUT"].some(c =>
+          e.message?.includes(c)
+        );
+
+      if (retryable) {
+        console.warn(`Retry ${attempt + 1}: ${e.message}`);
+        this.rotateModel();
+        await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+        return this.withRetry(op, attempt + 1);
+      }
+      throw e;
     }
   }
 
-  private regexFallback(userMessage: string): ParsedIntent | null {
-    const text = userMessage.trim();
-    // Patterns: "send 50 STT to 0xabc" | "transfer 10 to Alice" | "pay Bob 5 STT"
-      const patterns: RegExp[] = [
-      /\b(send|transfer)\s+(\d+(?:\.\d+)?)\s*(ETH|STT)?\s*to\s+(.+)/i,
-      /\bpay\s+(.+?)\s+(\d+(?:\.\d+)?)\s*(ETH|STT)?/i,
-      /\b(?:check|show|what(?:'|)s|what is)\s+(?:my\s+)?balance\b(?:\s+of\s+(ETH|STT))?/i,
-    ];    for (const pattern of patterns) {
-      const m = text.match(pattern);
-      if (!m) continue;
-      if (/pay/i.test(pattern.source)) {
-        const recipient = m[1];
-        const amount = m[2];
-        const token = (m[3] || "STT").toUpperCase();
-        if (token !== "ETH" && token !== "STT") return null;
-        return { action: "pay", amount, token, recipient, confidence: 0.9 };
-      }
-      if (/send\|transfer/.test(pattern.source)) {
-        const action = (
-          m[1] || "transfer"
-        ).toLowerCase() as ParsedIntent["action"];
-        const amount = m[2];
-        const token = (m[3] || "STT").toUpperCase();
-        if (token !== "ETH" && token !== "STT") return null;
-        const recipient = m[4];
-        return { action, amount, token, recipient, confidence: 0.9 };
-      }
-      if (/balance/.test(pattern.source)) {
-        const token = ((m[1] as string) || "STT").toUpperCase();
-        if (token !== "ETH" && token !== "STT") return null;
-        // Use balance action; amount/recipient not needed
-        return {
-          action: "balance",
-          amount: "0",
-          token,
-          recipient: "",
-          confidence: 0.9,
-        };
+  // ───── REGEX FALLBACK (used when Gemini fails or confidence < 0.7) ─────
+  private regexFallback(msg: string): ParsedIntent | null {
+    const txt = msg.trim();
+    const patterns: [RegExp, (m: RegExpMatchArray) => ParsedIntent | null][] = [
+      [/\b(send|transfer)\s+(\d+(?:\.\d+)?)\s*(ETH|STT)?\s*to\s+(.+)/i, m => ({
+        action: "transfer",
+        amount: m[2],
+        token: (m[3] || "STT").toUpperCase(),
+        recipient: m[4],
+        confidence: 0.9,
+      })],
+      [/\bpay\s+(.+?)\s+(\d+(?:\.\d+)?)\s*(ETH|STT)?/i, m => ({
+        action: "transfer",
+        amount: m[2],
+        token: (m[3] || "STT").toUpperCase(),
+        recipient: m[1],
+        confidence: 0.9,
+      })],
+      [/\b(?:check|show|what(?:'|)s|what is)\s+(?:my\s+)?balance\b(?:\s+of\s+(ETH|STT))?/i, m => ({
+        action: "balance",
+        amount: "0",
+        token: (m[1] || "STT").toUpperCase(),
+        recipient: "",
+        confidence: 0.9,
+      })],
+      [/\b(?:add|create|save)\s+(.+?)\s+(?:as\s+)?(?:contact|address)\s+(?:with\s+)?(?:address\s+)?(0x[a-fA-F0-9]{40})/i, m => ({
+        action: "add_contact",
+        amount: "0",
+        token: "STT",
+        recipient: m[2],
+        name: m[1].trim(),
+        confidence: 0.9,
+      })],
+      [/\b(?:create|make|add)\s+(?:a\s+)?(?:team\s+)?(?:called|named)\s+(.+)/i, m => ({
+        action: "create_team",
+        amount: "0",
+        token: "STT",
+        recipient: "",
+        teamName: m[1].trim(),
+        confidence: 0.9,
+      })],
+    ];
+
+    for (const [re, fn] of patterns) {
+      const match = txt.match(re);
+      if (match) {
+        const intent = fn(match);
+        if (intent && ["STT", "ETH"].includes(intent.token)) return intent;
       }
     }
     return null;
   }
 
-  async parseIntent(userMessage: string): Promise<ParsedIntent | null> {
-    if (!hasApiKey || !this.model) {
+  // ───── PARSE INTENT (JSON ONLY, SAFE + ROBUST) ─────
+async parseIntent(userMessage: string): Promise<ParsedIntent | null> {
+  console.log("Parsing intent:", userMessage);
+
+  if (!this.model) return this.regexFallback(userMessage);
+
+  const operation = async () => {
+    const prompt = `
+    You are AgentKyro's intent parser.
+    Your ONLY job is to interpret the user's message and return a VALID JSON object that matches one of the known actions below.
+    DO NOT include markdown, explanations, comments, or any text outside the JSON.
+    ALWAYS use the exact field names and formats described below.
+    ⚠️ If you are unsure, still return your BEST GUESS as JSON but with a low confidence (e.g., 0.4).
+    NEVER return null, text, or markdown — only JSON.
+
+    ---
+    🧠 USER MESSAGE:
+    "${userMessage}"
+    ---
+
+    🎯 POSSIBLE ACTIONS:
+
+    1. "transfer"
+       - Description: When the user wants to send tokens or money to another wallet address.
+       - Required fields:
+         {
+           "action": "transfer",
+           "amount": "<numeric value without symbols, e.g. 2 or 10.5>",
+           "token": "<token symbol like STT or ETH>",
+           "recipient": "<valid 0x wallet address>",
+           "confidence": <float between 0 and 1>
+         }
+
+    2. "balance"
+       - Description: When the user wants to check their wallet or token balance.
+       - Required fields:
+         {
+           "action": "balance",
+           "token": "<optional token symbol, if specified>",
+           "confidence": <float>
+         }
+
+    3. "add_contact"
+       - Description: When the user wants to add or save a contact with a name and wallet address.
+       - Required fields:
+         {
+           "action": "add_contact",
+           "name": "<contact name>",
+           "recipient": "<valid 0x wallet address>",
+           "confidence": <float>
+         }
+
+    4. "create_team"
+       - Description: When the user wants to create or register a team, group, or organization.
+       - Required fields:
+         {
+           "action": "create_team",
+           "teamName": "<team name>",
+           "confidence": <float>
+         }
+       - ⚠️ IMPORTANT:
+         If the user message uses keys such as "name", "team", or "team_name",
+         you MUST still return them normalized as "teamName" in the final JSON.
+
+    5. "show_analytics"
+       - Description: When the user wants to view insights, stats, or reports about wallet or usage.
+       - Required fields:
+         {
+           "action": "show_analytics",
+           "confidence": <float>
+         }
+
+    ---
+    Always return ONE object.
+    Confidence reflects how certain you are.
+    `;
+
+    const result = await this.model!.generateContent(prompt);
+    const txt = (await result.response).text();
+    console.log("Gemini JSON response:", txt);
+
+    let json: any;
+    try {
+      json = JSON.parse(txt);
+    } catch {
+      console.warn("⚠️ Invalid JSON from Gemini → regex fallback");
       return this.regexFallback(userMessage);
     }
-    try {
-      const prompt = `
-  You are a transaction intent parser. Parse the following message and extract transaction details.
-  
-  User message: "${userMessage}"
-  
-  Extract the following information:
-  1. Action type (transfer/send/pay)
-  2. Amount (numeric value)
-  3. Token symbol (default to STT if not specified)
-  4. Recipient (wallet address or name)
-  
-  Return ONLY a JSON object in this exact format:
-  {
-    "action": "transfer",
-    "amount": "50",
-    "token": "STT",
-    "recipient": "Alice",
-    "confidence": 0.95
-  }
-  
-  If you cannot parse the intent with confidence above 0.7, return:
-  {
-    "action": null,
-    "amount": null,
-    "token": null,
-    "recipient": null,
-    "confidence": 0.0
-  }
-  
-  Rules:
-  - Amount must be a positive number
-  - Token must be either "ETH" or "STT" only (default to "STT" if not specified)
-  - Recipient can be a name or wallet address
-  - Confidence should be 0.0 to 1.0
-  - Return ONLY the JSON, no markdown formatting
-  - Set confidence to 0.0 if token is not ETH or STT
-  `;
 
-      const result = await this.model.generateContent(prompt);
-      const text = (await result.response).text();
-      const cleaned = text
-        .replace(/```json\n?/g, "")
-        .replace(/```\n?/g, "")
-        .trim();
-      const parsed = JSON.parse(cleaned);
-      if (
-        parsed.confidence < 0.7 ||
-        !parsed.action ||
-        !parsed.amount ||
-        !parsed.recipient
-      ) {
-        return null;
-      }
-      return parsed;
-    } catch (error) {
-      console.error("Error parsing intent with Gemini, using fallback:", error);
+    // ✅ Null guard and safety
+    if (!json || typeof json !== "object") {
+      console.warn("⚠️ Gemini returned null or non-object → regex fallback");
       return this.regexFallback(userMessage);
     }
-  }
 
-  async generateResponse(
-    context: string,
-    userMessage: string,
-    senderAddress: string
-  ): Promise<string> {
-    if (!hasApiKey || !this.model) {
-      console.warn('Gemini AI not initialized:', { hasApiKey, hasModel: !!this.model });
-      // Simple fallback text
-      return `You said: "${userMessage}". I can help send tokens or check balances. (Note: AI features are currently limited)`;
+    // ✅ Normalize alternate key names
+    if (json.team_name && !json.teamName) json.teamName = json.team_name;
+    if (json.team && !json.teamName) json.teamName = json.team;
+    if (json.name && json.action === "create_team" && !json.teamName) json.teamName = json.name;
+
+    // ✅ Normalize and fill defaults
+    json.amount ??= "0";
+    json.token ??= "STT";
+    json.recipient ??= "";
+    json.confidence ??= 0.5;
+
+    if (!json.action || json.confidence < 0.7) {
+      console.log("Low confidence → regex fallback");
+      return this.regexFallback(userMessage);
     }
-    try {
-      const prompt = `You are AgentKyro AI agent, a friendly blockchain transaction assistant. 
 
+    return json as ParsedIntent;
+  };
+
+  try {
+    return await this.withRetry(operation);
+  } catch (e: any) {
+    console.error("Gemini failed:", e);
+    return this.regexFallback(userMessage);
+  }
+}
+
+
+  // ───── TEXT RESPONSE (fallback when no intent) ─────
+  async generateResponse(context: string, userMessage: string, address: string): Promise<string> {
+    if (!this.model) return `You said: "${userMessage}". AI limited.`;
+    try {
+      const op = async () => {
+        const p = `You are AgentKyro, a concise blockchain assistant.
 Context: ${context}
-User message: "${userMessage}"
-The current user's wallet address is: ${senderAddress ?? "Unknown"}.
-
-Generate a helpful, concise response. Do not lie. If you can't do it just be staright forward with your answers. Keep it conversational and friendly. 
-If there's an error, explain it clearly and suggest how to fix it.`;
-
-      const result = await this.model.generateContent(prompt);
-      const response = result.response;
-      return response.text();
-    } catch (error) {
-      console.error("Error generating response:", error);
-      return "I'm having trouble processing that. Please try again.";
+User: ${userMessage}
+Wallet: ${address}
+Reply naturally, max 2 sentences.`;
+        const r = await this.model!.generateContent(p);
+        return (await r.response).text();
+      };
+      return await this.withRetry(op);
+    } catch {
+      return "I'm having trouble. Try again.";
     }
   }
 }

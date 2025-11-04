@@ -1,24 +1,26 @@
 // Import all API clients
-import { UserApiClient } from './userApi';
-import { ContactApiClient } from './contactApi';
-import { TeamApiClient } from './teamApi';
 import { AnalyticsApiClient } from './analyticsApi';
-import { TransactionApiClient } from './transactionApi';
+import { ChatApiClient } from './chatApi';
+import { ContactApiClient } from './contactApi';
+import { HealthApiClient } from './healthApi';
+import { NotificationApiClient } from './notificationApi';
 import { SecurityApiClient } from './securityApi';
 import { SharingApiClient } from './sharingApi';
-import { NotificationApiClient } from './notificationApi';
-import { HealthApiClient } from './healthApi';
+import { TeamApiClient } from './teamApi';
+import { TransactionApiClient } from './transactionApi';
+import { UserApiClient } from './userApi';
 
 // Export all API clients
-export { UserApiClient } from './userApi';
-export { ContactApiClient } from './contactApi';
-export { TeamApiClient } from './teamApi';
 export { AnalyticsApiClient } from './analyticsApi';
-export { TransactionApiClient } from './transactionApi';
+export { ChatApiClient } from './chatApi';
+export { ContactApiClient } from './contactApi';
+export { HealthApiClient } from './healthApi';
+export { NotificationApiClient } from './notificationApi';
 export { SecurityApiClient } from './securityApi';
 export { SharingApiClient } from './sharingApi';
-export { NotificationApiClient } from './notificationApi';
-export { HealthApiClient } from './healthApi';
+export { TeamApiClient } from './teamApi';
+export { TransactionApiClient } from './transactionApi';
+export { UserApiClient } from './userApi';
 
 // Export types
 export * from '@/types/api';
@@ -33,5 +35,6 @@ export class AgentKyroApiClient {
   static security = SecurityApiClient;
   static sharing = SharingApiClient;
   static notifications = NotificationApiClient;
+  static chat = ChatApiClient;
   static health = HealthApiClient;
 }
