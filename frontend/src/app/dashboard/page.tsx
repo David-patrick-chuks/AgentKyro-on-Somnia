@@ -61,7 +61,7 @@ export default function Dashboard() {
   const renderActiveSection = () => {
     switch (activeSection) {
       case "analytics":
-        return <AnalyticsDashboard />;
+        return <AnalyticsDashboard setActiveSection={setActiveSection} />;
       case "contacts":
         return <ContactManagement />;
       case "teams":
@@ -79,7 +79,7 @@ export default function Dashboard() {
       case "notifications":
         return <NotificationManagement />;
       default:
-        return <AnalyticsDashboard />;
+        return <AnalyticsDashboard setActiveSection={setActiveSection} />;
     }
   };
 

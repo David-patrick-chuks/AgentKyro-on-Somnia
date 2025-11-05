@@ -2,27 +2,42 @@
 import { AgentKyroApiClient, AnalyticsData } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaArrowDown, FaArrowUp, FaChartLine, FaChartPie, FaExchangeAlt, FaWallet } from "react-icons/fa";
+import {
+  FaAddressBook,
+  FaArrowDown,
+  FaArrowUp,
+  FaChartLine,
+  FaChartPie,
+  FaComments,
+  FaExchangeAlt,
+  FaShieldAlt,
+  FaWallet,
+} from "react-icons/fa";
 
-export default function AnalyticsDashboard() {
+export default function AnalyticsDashboard({setActiveSection}) {
   const { user } = usePrivy();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d" | "1y">("30d");
+  const [selectedPeriod, setSelectedPeriod] = useState<
+    "7d" | "30d" | "90d" | "1y"
+  >("30d");
   const isFetchingRef = useRef(false);
 
   const walletAddress = user?.wallet?.address || "";
 
   const fetchAnalytics = useCallback(async () => {
     if (isFetchingRef.current || !walletAddress) return;
-    
+
     isFetchingRef.current = true;
     try {
       setLoading(true);
       setError(null);
-      const response = await AgentKyroApiClient.analytics.getAnalyticsDashboard(walletAddress, selectedPeriod);
-      
+      const response = await AgentKyroApiClient.analytics.getAnalyticsDashboard(
+        walletAddress,
+        selectedPeriod
+      );
+
       if (response.success && response.data) {
         setAnalytics(response.data);
       } else {
@@ -47,7 +62,10 @@ export default function AnalyticsDashboard() {
       <div className="space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-pulse">
+            <div
+              key={i}
+              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 animate-pulse"
+            >
               <div className="h-4 bg-slate-700 rounded w-1/2 mb-2"></div>
               <div className="h-8 bg-slate-700 rounded w-3/4 mb-2"></div>
               <div className="h-3 bg-slate-700 rounded w-1/3"></div>
@@ -76,26 +94,34 @@ export default function AnalyticsDashboard() {
     return (
       <div className="text-center py-12">
         <FaChartLine className="text-6xl text-slate-400 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white mb-2">No Analytics Data</h3>
-        <p className="text-slate-400">Start making transactions to see your analytics dashboard.</p>
+        <h3 className="text-xl font-semibold text-white mb-2">
+          No Analytics Data
+        </h3>
+        <p className="text-slate-400">
+          Start making transactions to see your analytics dashboard.
+        </p>
       </div>
     );
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 2,
     }).format(amount);
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US').format(num);
+    return new Intl.NumberFormat("en-US").format(num);
   };
 
   const getChangeIcon = (change: number) => {
-    return change >= 0 ? <FaArrowUp className="text-green-400" /> : <FaArrowDown className="text-red-400" />;
+    return change >= 0 ? (
+      <FaArrowUp className="text-green-400" />
+    ) : (
+      <FaArrowDown className="text-red-400" />
+    );
   };
 
   const getChangeColor = (change: number) => {
@@ -106,7 +132,7 @@ export default function AnalyticsDashboard() {
     <div className="space-y-6">
       {/* Period Selector */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+        <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
           Analytics Dashboard
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -135,13 +161,21 @@ export default function AnalyticsDashboard() {
             </div>
             <div className="flex items-center gap-1">
               {getChangeIcon(analytics.portfolioChange)}
-              <span className={`text-sm font-medium ${getChangeColor(analytics.portfolioChange)}`}>
+              <span
+                className={`text-sm font-medium ${getChangeColor(
+                  analytics.portfolioChange
+                )}`}
+              >
                 {Math.abs(analytics.portfolioChange).toFixed(1)}%
               </span>
             </div>
           </div>
-          <h3 className="text-slate-400 text-sm font-medium mb-1">Portfolio Value</h3>
-          <p className="text-2xl font-bold text-white">{formatCurrency(analytics.portfolioValue)}</p>
+          <h3 className="text-slate-400 text-sm font-medium mb-1">
+            Portfolio Value
+          </h3>
+          <p className="text-2xl font-bold text-white">
+            {formatCurrency(analytics.portfolioValue)}
+          </p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
@@ -154,8 +188,12 @@ export default function AnalyticsDashboard() {
               <span className="text-sm font-medium text-red-400">Outgoing</span>
             </div>
           </div>
-          <h3 className="text-slate-400 text-sm font-medium mb-1">Total Spent</h3>
-          <p className="text-2xl font-bold text-white">{formatCurrency(analytics.totalSpent)}</p>
+          <h3 className="text-slate-400 text-sm font-medium mb-1">
+            Total Spent
+          </h3>
+          <p className="text-2xl font-bold text-white">
+            {formatCurrency(analytics.totalSpent)}
+          </p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
@@ -165,11 +203,17 @@ export default function AnalyticsDashboard() {
             </div>
             <div className="flex items-center gap-1">
               <FaArrowUp className="text-green-400" />
-              <span className="text-sm font-medium text-green-400">Incoming</span>
+              <span className="text-sm font-medium text-green-400">
+                Incoming
+              </span>
             </div>
           </div>
-          <h3 className="text-slate-400 text-sm font-medium mb-1">Total Received</h3>
-          <p className="text-2xl font-bold text-white">{formatCurrency(analytics.totalReceived)}</p>
+          <h3 className="text-slate-400 text-sm font-medium mb-1">
+            Total Received
+          </h3>
+          <p className="text-2xl font-bold text-white">
+            {formatCurrency(analytics.totalReceived)}
+          </p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all duration-300">
@@ -181,8 +225,12 @@ export default function AnalyticsDashboard() {
               <span className="text-sm font-medium text-slate-400">Count</span>
             </div>
           </div>
-          <h3 className="text-slate-400 text-sm font-medium mb-1">Transactions</h3>
-          <p className="text-2xl font-bold text-white">{formatNumber(analytics.transactionCount)}</p>
+          <h3 className="text-slate-400 text-sm font-medium mb-1">
+            Transactions
+          </h3>
+          <p className="text-2xl font-bold text-white">
+            {formatNumber(analytics.transactionCount)}
+          </p>
         </div>
       </div>
 
@@ -190,7 +238,9 @@ export default function AnalyticsDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Spending Patterns Chart */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Spending Patterns</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Spending Patterns
+          </h3>
           <div className="space-y-3">
             {analytics.spendingByDay.slice(0, 7).map((day, index) => (
               <div key={index} className="flex items-center justify-between">
@@ -200,11 +250,20 @@ export default function AnalyticsDashboard() {
                     <div
                       className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
                       style={{
-                        width: `${Math.min((day.amount / Math.max(...analytics.spendingByDay.map(d => d.amount))) * 100, 100)}%`
+                        width: `${Math.min(
+                          (day.amount /
+                            Math.max(
+                              ...analytics.spendingByDay.map((d) => d.amount)
+                            )) *
+                            100,
+                          100
+                        )}%`,
                       }}
                     ></div>
                   </div>
-                  <span className="text-white text-sm font-medium">{formatCurrency(day.amount)}</span>
+                  <span className="text-white text-sm font-medium">
+                    {formatCurrency(day.amount)}
+                  </span>
                 </div>
               </div>
             ))}
@@ -213,7 +272,9 @@ export default function AnalyticsDashboard() {
 
         {/* Top Recipients */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Top Recipients</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Top Recipients
+          </h3>
           <div className="space-y-4">
             {analytics.topRecipients.slice(0, 5).map((recipient, index) => (
               <div key={index} className="flex items-center justify-between">
@@ -225,13 +286,18 @@ export default function AnalyticsDashboard() {
                   </div>
                   <div>
                     <p className="text-white text-sm font-medium">
-                      {recipient.address.slice(0, 6)}...{recipient.address.slice(-4)}
+                      {recipient.address.slice(0, 6)}...
+                      {recipient.address.slice(-4)}
                     </p>
-                    <p className="text-slate-400 text-xs">{recipient.count} transactions</p>
+                    <p className="text-slate-400 text-xs">
+                      {recipient.count} transactions
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-white text-sm font-medium">{formatCurrency(recipient.amount)}</p>
+                  <p className="text-white text-sm font-medium">
+                    {formatCurrency(recipient.amount)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -243,27 +309,35 @@ export default function AnalyticsDashboard() {
       <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
         <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-xl transition-all duration-300">
-            <FaChartLine className="text-blue-400 text-xl" />
+          {/* Chat with Kyro */}
+          <button 
+                  onClick={() => setActiveSection("chat")} className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-xl transition-all duration-300">
+            <FaComments className="text-blue-400 text-xl" />
             <div className="text-left">
-              <p className="text-white font-medium">View Detailed Report</p>
-              <p className="text-slate-400 text-sm">Export analytics data</p>
+              <p className="text-white font-medium">Chat with Kyro</p>
+              <p className="text-slate-400 text-sm">Start a new conversation</p>
             </div>
           </button>
+
+          {/* Contact List */}
+          <button 
           
-          <button className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-xl transition-all duration-300">
-            <FaChartPie className="text-green-400 text-xl" />
+          onClick={() => setActiveSection("contacts")}
+          className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-xl transition-all duration-300">
+            <FaAddressBook className="text-green-400 text-xl" />
             <div className="text-left">
-              <p className="text-white font-medium">Spending Forecast</p>
-              <p className="text-slate-400 text-sm">AI predictions</p>
+              <p className="text-white font-medium">Contact List</p>
+              <p className="text-slate-400 text-sm">View or manage contacts</p>
             </div>
           </button>
-          
-          <button className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-xl transition-all duration-300">
-            <FaWallet className="text-purple-400 text-xl" />
+
+          {/* Security */}
+          <button 
+                  onClick={() => setActiveSection("security")} className="flex items-center gap-3 p-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 rounded-xl transition-all duration-300">
+            <FaShieldAlt className="text-purple-400 text-xl" />
             <div className="text-left">
-              <p className="text-white font-medium">Portfolio Analysis</p>
-              <p className="text-slate-400 text-sm">Deep dive insights</p>
+              <p className="text-white font-medium">Security</p>
+              <p className="text-slate-400 text-sm">Manage access & privacy</p>
             </div>
           </button>
         </div>

@@ -4,6 +4,8 @@ import { AgentKyroApiClient } from "@/utils/api";
 import { usePrivy } from "@privy-io/react-auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaClock, FaEdit, FaPause, FaPlay, FaPlus, FaTrash } from "react-icons/fa";
+import { SOMNIA_CONFIG, TOKEN_ADDRESSES } from "@/lib/blockchain/config";
+import { ethers } from "ethers";
 
 interface ScheduledTransaction {
   id: string;
@@ -71,36 +73,152 @@ export default function AdvancedTransactions() {
     }
   }, [walletAddress, fetchTransactions]);
 
-  const handleCreateTransaction = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const payload = {
-        amount: formData.amount,
-        token: formData.token,
-        recipient: formData.recipient,
-        scheduledFor: formData.scheduledFor,
-        recurring: formData.recurring.frequency ? formData.recurring : undefined,
-      };
 
-      const response = await AgentKyroApiClient.transactions.createScheduledTransaction(walletAddress, payload);
-      
-      if (response.success) {
-        setShowCreateModal(false);
-        setFormData({
-          amount: "",
-          token: "STT",
-          recipient: "",
-          scheduledFor: "",
-          recurring: { frequency: "", endDate: "" },
+
+// Helper to send a real blockchain transaction (same as ChatInterface)
+const sendRealTransaction = async ({
+  recipient,
+  amount,
+  token,
+}: {
+  recipient: string;
+  amount: string;
+  token: string;
+}) => {
+  if (!window.ethereum) throw new Error("Wallet not connected.");
+
+  const provider = new ethers.BrowserProvider(window.ethereum as any);
+  const network = await provider.getNetwork();
+
+  // Ensure we're on the Somnia network
+  if (Number(network.chainId) !== SOMNIA_CONFIG.chainId) {
+    const hex = "0x" + SOMNIA_CONFIG.chainId.toString(16);
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hex }],
+      });
+    } catch (err: any) {
+      if (err.code === 4902) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [SOMNIA_CONFIG],
         });
-        fetchTransactions();
-      } else {
-        setError(response.error || "Failed to create transaction");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred");
+      } else throw err;
     }
-  };
+  }
+
+  const signer = await provider.getSigner();
+
+  let to = recipient;
+  if (!ethers.isAddress(to)) {
+    const res = await fetch("/api/resolve-address", {
+      method: "POST",
+      body: JSON.stringify({ nameOrAddress: to }),
+    });
+    const data = await res.json();
+    if (!data?.address || !ethers.isAddress(data.address))
+      throw new Error("Invalid recipient");
+    to = data.address;
+  }
+
+  // Native STT (Somnia Token)
+  if (token === "STT") {
+    const tx = await signer.sendTransaction({
+      to,
+      value: ethers.parseEther(amount),
+    });
+    return tx.hash;
+  }
+
+  // ERC20 transfer
+  const tokenAddr = TOKEN_ADDRESSES[token as keyof typeof TOKEN_ADDRESSES];
+  if (!tokenAddr) throw new Error("Token not supported");
+
+  const abi = [
+    "function transfer(address to, uint256 amount) returns (bool)",
+    "function decimals() view returns (uint8)",
+  ];
+  const contract = new ethers.Contract(tokenAddr, abi, signer);
+  const decimals = await contract.decimals();
+  const tx = await contract.transfer(to, ethers.parseUnits(amount, decimals));
+  return tx.hash;
+};
+
+// === Replace your old handleCreateTransaction with this ===
+const handleCreateTransaction = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError(null);
+
+  try {
+    if (!window.ethereum) {
+      alert("Please connect your wallet.");
+      return;
+    }
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const userAddress = await signer.getAddress();
+
+    // 🔹 Send payment to AI Agent wallet using same sendRealTransaction logic
+    const AI_AGENT_WALLET = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+    console.log("🚀 Sending transaction to Agent wallet...");
+    const txHash = await sendRealTransaction({
+      recipient: AI_AGENT_WALLET,
+      amount: formData.amount,
+      token: formData.token,
+    });
+
+    alert("Transaction sent! Waiting for confirmation...");
+
+    // Wait for confirmation
+    const receipt = await provider.waitForTransaction(txHash);
+    console.log("✅ Transaction confirmed:", receipt.transactionHash);
+
+    // 🔹 Save scheduled transaction to backend
+    const payload = {
+      amount: formData.amount,
+      token: formData.token,
+      recipient: formData.recipient,
+      scheduledFor: formData.scheduledFor,
+      recurring:
+        formData.recurring.frequency && formData.recurring.frequency !== "none"
+          ? formData.recurring
+          : undefined,
+      paymentTxHash: txHash,
+      paidToAgent: true,
+    };
+
+    const response = await AgentKyroApiClient.transactions.createScheduledTransaction(
+      userAddress,
+      payload
+    );
+
+    if (response.success) {
+      alert("✅ Schedule created successfully! Payment sent to Agent wallet.");
+      setShowCreateModal(false);
+      setFormData({
+        amount: "",
+        token: "STT",
+        recipient: "",
+        scheduledFor: "",
+        recurring: { frequency: "", endDate: "" },
+      });
+      fetchTransactions();
+    } else {
+      setError(response.error || "Failed to create scheduled transaction.");
+    }
+  } catch (err: any) {
+    console.error(err);
+    if (err.message?.includes("user rejected")) {
+      setError("Transaction rejected by user.");
+    } else {
+      setError(err.message || "Error sending transaction.");
+    }
+  }
+};
+
+
 
   const handleUpdateTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -253,7 +371,7 @@ export default function AdvancedTransactions() {
                   <FaEdit className="text-slate-400 hover:text-white text-sm" />
                 </button>
                 <button
-                  onClick={() => handleDeleteTransaction(transaction.id)}
+                  onClick={() => handleDeleteTransaction(transaction._id)}
                   className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/30 rounded-lg transition-all duration-300"
                   title="Delete transaction"
                 >
