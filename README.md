@@ -1,6 +1,7 @@
 # AgentKyro
 
-**AgentKyro** is an AI-powered crypto swap dApp for the Somnia testnet. It features a ChatGPT-style interface, natural language and voice input, wallet connection, and robust UX for seamless token transfers.
+**AgentKyro** is an AI-powered crypto transaction and automation dApp built for the Somnia Testnet.
+It provides a natural-language and voice-enabled interface for token swaps, payments, scheduling, analytics, and smart contact management — all powered by AI and blockchain automation.
 
 ## 🚀 Features
 
