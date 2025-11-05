@@ -207,42 +207,7 @@ export default function Home() {
           </section>
 
           {/* CTA Section */}
-          <section className="px-4 md:px-8 py-20">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                  <span className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
-                    Ready to Transform Your DeFi Experience?
-                  </span>
-                </h2>
-                <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
-                  Join thousands of users who are already managing their DeFi portfolios 
-                  with AI-powered intelligence and automation.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button
-                    onClick={() => {
-                      if (!authenticated) {
-                        setShowConnectMsg(true);
-                        setTimeout(() => setShowConnectMsg(false), 3000);
-                      } else {
-                        navigateToDashboard();
-                      }
-                    }}
-                    className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-lg"
-                  >
-                    Start Your Journey
-                  </button>
-                  <Link
-                    href="#features"
-                    className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white font-semibold rounded-2xl transition-all duration-300 backdrop-blur-xl text-lg"
-                  >
-                    Explore Features
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </section>
+        
         </main>
 
         {/* Footer */}
@@ -276,18 +241,14 @@ export default function Home() {
                 <ul className="space-y-2 text-slate-400">
                   <li><Link href="#features" className="hover:text-white transition-colors">Features</Link></li>
                   <li><Link href="#" className="hover:text-white transition-colors">Analytics</Link></li>
-                  <li><Link href="#" className="hover:text-white transition-colors">Security</Link></li>
-                  <li><Link href="#" className="hover:text-white transition-colors">API</Link></li>
                 </ul>
               </div>
               
               <div>
                 <h4 className="font-semibold text-white mb-4">Support</h4>
                 <ul className="space-y-2 text-slate-400">
-                  <li><Link href="#" className="hover:text-white transition-colors">Documentation</Link></li>
-                  <li><Link href="#" className="hover:text-white transition-colors">Help Center</Link></li>
-                  <li><Link href="#" className="hover:text-white transition-colors">Community</Link></li>
                   <li><Link href="#" className="hover:text-white transition-colors">Contact</Link></li>
+                  <li><Link href="#" className="hover:text-white transition-colors">Security</Link></li>
                 </ul>
               </div>
             </div>
