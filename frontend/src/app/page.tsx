@@ -39,13 +39,9 @@ export default function Home() {
         >
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Image
-                src="/logo.jpg"
-                alt="AgentKyro Logo"
-                width={45}
-                height={45}
-                className="rounded-xl border border-white/20"
-              />
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+            <FaRobot className="text-white text-lg" />
+          </div>
               <div className="absolute -inset-1 bg-gradient-to-r from-white/20 to-slate-400/20 rounded-xl blur-sm -z-10"></div>
             </div>
             <div>
@@ -216,13 +212,9 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-3 mb-4">
-                  <Image
-                    src="/logo.jpg"
-                    alt="AgentKyro Logo"
-                    width={40}
-                    height={40}
-                    className="rounded-xl border border-white/20"
-                  />
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+            <FaRobot className="text-white text-lg" />
+          </div>
                   <div>
                     <h3 className="font-bold text-lg bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
                       AgentKyro
